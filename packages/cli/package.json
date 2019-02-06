@@ -4,6 +4,15 @@
   "description": "Logview CLi",
   "main": "dist/index.js",
   "dependencies": {
+    "apollo-cache-inmemory": "^1.4.2",
+    "apollo-client": "^2.4.12",
+    "apollo-link": "^1.2.8",
+    "apollo-link-http": "^1.5.11",
+    "apollo-link-ws": "^1.0.14",
+    "apollo-utilities": "^1.1.2",
+    "graphql-tag": "^2.10.1",
+    "node-fetch": "^2.3.0",
+    "subscriptions-transport-ws": "^0.9.15"
   },
   "devDependencies": {
     "@mishguru/package": "^5.1.0"
