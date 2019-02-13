@@ -36,6 +36,9 @@
     "lint": "pkg-lint",
     "tidy": "pkg-tidy"
   },
+  "bin": {
+    "logv": "./bin/logv"
+  },
   "author": "Mish Guru <devs@mish.guru>",
   "license": "MIT"
 }
