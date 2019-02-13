@@ -37,10 +37,8 @@ const descend = async (client, argv) => {
   const { results, cursors } = res.data.searchLogs
   printLogs('pretty', results)
 
-  const { hasNext, after } = cursors
-  if (hasNext) {
-    console.log('[press enter to load more]')
-  }
+  client.stop()
+  process.exit(0)
 }
 
 export default descend
