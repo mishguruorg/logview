@@ -295,5 +295,5 @@ meta.init({ ...getMetaDbCredentials(), verbose: true }).then(() => {
 
   const IS_PRODUCTION = process.env.NODE_ENV !== 'development'
 
-  server.start(() => console.log('Server is running on localhost:4000'))
+  server.start(({ port }) => console.log(`Server is listening on ${port}`))
 })
