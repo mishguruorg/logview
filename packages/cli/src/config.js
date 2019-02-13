@@ -1,0 +1,43 @@
+import xdgBasedir from 'xdg-basedir'
+import * as path from 'path'
+import * as fs from 'fs'
+import mkdirp from 'mkdirp'
+
+const CONFIG_PATH = path.join(xdgBasedir.config, 'logview/config.json')
+const CONFIG_DIR = path.dirname(CONFIG_PATH)
+
+const EXAMPLE_CONFIG = {
+  default: 'example',
+  servers: {
+    example: {
+      host: 'example.mish.guru',
+      secret: 'xxxxxxxxxxxxxxxxxxxxxx'
+    }
+  }
+}
+
+if (fs.existsSync(CONFIG_PATH) === false) {
+  mkdirp.sync(CONFIG_DIR)
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify(EXAMPLE_CONFIG, null, 2))
+}
+
+export { CONFIG_PATH }
+
+let config = {
+  default: null,
+  servers: {}
+}
+
+try {
+  const userConfig = require(CONFIG_PATH)
+  config.default = userConfig.default || null
+  config.servers = userConfig.servers || {}
+} catch (error) { 
+  console.error(`Error parsing ${CONFIG_PATH}.`, error)
+}
+
+export function getServer (argv) {
+  return config.servers[argv.server || config.default]
+}
+
+export default config

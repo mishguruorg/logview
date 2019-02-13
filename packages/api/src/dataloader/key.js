@@ -1,5 +1,3 @@
-// @flow
-
 type $parseKeyOptions = {
   parseInt?: boolean
 }
