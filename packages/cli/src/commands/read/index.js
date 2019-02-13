@@ -16,8 +16,7 @@ export const builder = {
 }
 
 export async function handler(argv) {
-  const { host, secret } = getServer(argv)
-  const client = createClient(host, secret)
+  const client = createClient(getServer(argv))
 
   const { data } = await client.query({
     variables: {
@@ -41,4 +40,7 @@ export async function handler(argv) {
   }
 
   printLogs(argv.format, data.logs)
+
+  client.stop()
+  process.exit(0)
 }

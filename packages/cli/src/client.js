@@ -8,21 +8,21 @@ import { getMainDefinition } from 'apollo-utilities'
 import { split, concat } from 'apollo-link'
 import { onError } from 'apollo-link-error'
 
-const createClient = (host, authorization) => {
+const createClient = (config) => {
   const httpLink = new HttpLink({
     fetch,
-    uri: `http://${host}`,
+    uri: config.http,
     headers: {
-      authorization
+      authorization: config.secret
     }
   })
 
   const wsLink = new WebSocketLink({
-    uri: `ws://${host}`,
+    uri: config.ws,
     options: {
       reconnect: true,
       connectionParams: {
-        authorization
+        authorization: config.secret
       }
     },
     webSocketImpl: WebSocket

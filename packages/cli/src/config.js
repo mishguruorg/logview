@@ -10,7 +10,8 @@ const EXAMPLE_CONFIG = {
   default: 'example',
   servers: {
     example: {
-      host: 'example.mish.guru',
+      http: 'https://example.mish.guru',
+      ws: 'wss://example.mish.guru',
       secret: 'xxxxxxxxxxxxxxxxxxxxxx'
     }
   }
