@@ -15,8 +15,7 @@ Open http://localhost:4000
 ```
 query {
   log(id: 18708208) {
-    name
-    info
+    type
   }
 }
 ```
@@ -25,8 +24,7 @@ query {
 {
   "data": {
     "log": {
-      "name": "instagramReelsTrayUpToDate",
-      "info": "InstagramAccount 21 is up to date with what is in Instagram reels tray"
+      "type": "instagramReelsTrayUpToDate",
     }
   }
 }
@@ -37,8 +35,7 @@ query {
 ```
 query {
   logs(ids: [18708205, 18708206]) {
-    name
-    info
+    type
   }
 }
 ```
@@ -48,12 +45,10 @@ query {
   "data": {
     "logs": [
       {
-        "name": "syncInstagramReelsTray",
-        "info": "syncInstagramReelsTray has been manually fired for InstagramAccount 21"
+        "type": "syncInstagramReelsTray",
       },
       {
-        "name": "syncInstagramThreads",
-        "info": "syncInstagramThreads has been manually fired for InstagramAccount 21"
+        "type": "syncInstagramThreads",
       }
     ]
   }
@@ -68,8 +63,7 @@ query {
 query {
   filter(input: { last: 5 }) {
     results {
-      name
-      info
+      type
     }
   }
 }
@@ -81,8 +75,7 @@ query {
 query {
   filter(input: { last: 5, userId: 43 }) {
     results {
-      name
-      info
+      type
     }
   }
 }
@@ -92,36 +85,21 @@ query {
 
 ```
 query {
-  filter(input: { last: 5, name: "unexpectedError" }) {
+  filter(input: { last: 5, type: "unexpectedError" }) {
     results {
-      name
-      info
+      type
     }
   }
 }
 ```
 
-*Get the last 5 logs with "productAnalytics" in the info string*
+*Get the last 5 logs for a specific account (by matching the payload)*
 
 ```
 query {
-  filter(input: { last: 5, info:"%productAnalytics%" }) {
+  filter(input: { last: 5, payload:"%\"instagramAccountId\":21%"}) {
     results {
-      name
-      info
-    }
-  }
-}
-```
-
-*Get the last 5 logs for a specific account*
-
-```
-query {
-  filter(input: { last: 5, jsonString:"%\"instagramAccountId\":21%"}) {
-    results {
-      name
-      info
+      type
     }
   }
 }
@@ -131,10 +109,9 @@ query {
 
 ```
 query {
-  filter(input: { last: 5, createdBefore: "2019-02-02T00:00:00Z" }) {
+  filter(input: { last: 5, sentBefore: "2019-02-02T00:00:00Z" }) {
     results {
-      name
-      info
+      type
     }
   }
 }
@@ -241,14 +218,11 @@ query {
 
 You can watch for new logs using GraphQL Subscriptions.
 
-Subscriptions work with any of the filter arguments, though strange things
-happen if you pass `createdBefore`, `after` or `before` fields.
-
 ```
 subscription {
   filter(input: { last: 5, userId: 43 }) {
     results {
-      name
+      type
     }
   }
 }
