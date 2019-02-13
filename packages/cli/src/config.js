@@ -10,8 +10,8 @@ const EXAMPLE_CONFIG = {
   default: 'example',
   servers: {
     example: {
-      http: 'https://example.mish.guru',
-      ws: 'wss://example.mish.guru',
+      http: 'https://localhost',
+      ws: 'wss://localhost',
       secret: 'xxxxxxxxxxxxxxxxxxxxxx'
     }
   }
@@ -33,11 +33,11 @@ try {
   const userConfig = require(CONFIG_PATH)
   config.default = userConfig.default || null
   config.servers = userConfig.servers || {}
-} catch (error) { 
+} catch (error) {
   console.error(`Error parsing ${CONFIG_PATH}.`, error)
 }
 
-export function getServer (argv) {
+export function getServer(argv) {
   return config.servers[argv.server || config.default]
 }
 

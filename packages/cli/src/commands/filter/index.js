@@ -56,9 +56,13 @@ export const builder = {
 export async function handler(argv) {
   const client = createClient(getServer(argv))
 
-  if (argv.follow) {
-    await ascend(client, argv)
-  } else {
-    await descend(client, argv)
+  try {
+    if (argv.follow) {
+      await ascend(client, argv)
+    } else {
+      await descend(client, argv)
+    }
+  } catch (error) {
+    process.exit(1)
   }
 }

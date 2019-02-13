@@ -5,7 +5,7 @@ import dumper from './dumper'
 const formats = {
   pretty,
   jq,
-  dumper,
+  dumper
 }
 
 const printLogs = (format, logs) => {

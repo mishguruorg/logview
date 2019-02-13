@@ -36,9 +36,9 @@ const ascend = async (client, argv) => {
     error(error) {
       console.error(error)
     },
-    complete () {
+    complete() {
       console.log('stream completed')
-    },
+    }
   })
 }
 
