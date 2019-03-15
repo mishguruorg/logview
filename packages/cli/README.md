@@ -9,26 +9,29 @@ npm install -g @mishguru/logview-cli
 ## Usage
 
 ```
-logv --help
+$ logv --help
+
+Display a list of logs
+
+Commands:
+  logv edit-config   Open the server config in your editor
+  logv read [ids..]  Display details about selected logs
+  logv filter        Display a list of logs                            [default]
 
 Options:
-  --help        Show help                                              [boolean]
-  --version     Show version number                                    [boolean]
-
-  --follow, -f  Append new logs as they are sent in   [boolean] [default: false]
-  --user, -u    A list of user IDs to filter logs by                     [array]
-  --type, -t    A list of event types to filter logs by                  [array]
-  --info, -i    Filter logs by info using SQL LIKE                      [string]
-  --payload, -p Filter logs by the JSON payload using SQL LIKE          [string]
-
-  --lines, -l   Number of logs to retrieve                [number] [default: 20]
-  --before, -b  Only display logs sent before the specified date        [string]
-  --after, -a   Only display logs sent after the specified date         [string]
-
-	--format 			Choose how to display the log 				 [string] [default:pretty]
-								pretty: Prettified log view
-								json: Displays payload in JSON, with title
-								jq: Only outputs JSON, useful for piping to jq
+  --version       Show version number                                  [boolean]
+  --server        Which server to use from the config
+                                             [choices: "internal", "production"]
+  --help          Show help                                            [boolean]
+  --follow, -f    Append new logs as they are created [boolean] [default: false]
+  --lines, -l     Number of logs to retrieve              [number] [default: 20]
+  --format                                          [string] [default: "pretty"]
+  --user, -u      A list of user IDs to filter logs by                   [array]
+  --sentFrom, -s  A list of service names to filter logs by              [array]
+  --type, -t      A list of topic type to filter logs by                 [array]
+  --payload, -p   Filter logs by payload using SQL LIKE                 [string]
+  --before, -b    Only display logs created before the specified date   [string]
+  --after, -a     Only display logs created after the specified date    [string]
 ```
 
 ```
