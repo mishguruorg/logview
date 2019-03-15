@@ -72,6 +72,7 @@ const searchLogs = async (input: SearchLogsInput) => {
     last,
     after,
     before,
+    sentFrom,
     sentBefore,
     sentAfter,
     userId,
@@ -194,7 +195,7 @@ const resolvers = {
       const { db } = ctx
       const jsonString = await db.Log.load(log.id, 'jsonString')
       const payload = JSON.parse(jsonString)
-      if (payload.__turbine__ != null) {
+      if (payload != null && payload.__turbine__ != null) {
         return payload.__turbine__.sentFrom
       }
       return null
