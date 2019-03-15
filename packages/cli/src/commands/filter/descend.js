@@ -35,7 +35,7 @@ const descend = async (client, argv) => {
   })
 
   const { results, cursors } = res.data.searchLogs
-  printLogs('pretty', results)
+  printLogs(argv.format, results)
 
   client.stop()
   process.exit(0)

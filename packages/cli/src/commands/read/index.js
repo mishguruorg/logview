@@ -10,7 +10,7 @@ export const describe = 'Display details about selected logs'
 
 export const builder = {
   format: {
-    default: 'pretty',
+    default: 'jq',
     type: 'string'
   }
 }

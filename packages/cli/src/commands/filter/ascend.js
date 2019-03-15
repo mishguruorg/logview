@@ -31,7 +31,7 @@ const ascend = async (client, argv) => {
   stream.subscribe({
     next(res) {
       const { results } = res.data.searchLogs
-      printLogs('pretty', results.reverse())
+      printLogs(argv.format, results.reverse())
     },
     error(error) {
       console.error(error)

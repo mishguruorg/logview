@@ -21,6 +21,10 @@ export const builder = {
     default: 20,
     type: 'number'
   },
+  format: {
+    default: 'pretty',
+    type: 'string'
+  },
   user: {
     describe: 'A list of user IDs to filter logs by',
     alias: 'u',
