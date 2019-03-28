@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "@mishguru/logview-api",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
