@@ -1,12 +1,15 @@
 import yargs from 'yargs'
+import { selfupdate } from '@mishguru/selfupdate'
 
 import * as editConfig from './commands/editConfig'
 import * as read from './commands/read'
 import * as filter from './commands/filter'
+import * as use from './commands/use'
 
 import config from './config'
+import pkg from '../package.json'
 
-yargs
+const argv = yargs
   .strict()
   .option('server', {
     describe: 'Which server to use from the config',
@@ -15,5 +18,13 @@ yargs
   .command(editConfig)
   .command(read)
   .command(filter)
+  .command(use)
   .help()
-  .parse()
+
+
+const start = async () => {
+  await selfupdate(pkg)
+  yargs.parse()
+}
+
+start().catch(console.error)

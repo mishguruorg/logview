@@ -4,6 +4,7 @@
   "description": "Logview CLi",
   "main": "dist/index.js",
   "dependencies": {
+    "@mishguru/selfupdate": "4.4.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
     "apollo-link": "^1.2.11",
