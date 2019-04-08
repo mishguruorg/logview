@@ -17,6 +17,8 @@ jobs:
             echo prefix = ~/npm >> ~/.npmrc
             echo 'export PATH=$PATH:~/npm/bin/' >> $BASH_ENV
             echo 'export DOCKER_BASE="mishguru/fanoutbase"' >> $BASH_ENV
+            echo 'export RANCHER_INTERNAL_DEPLOYMENT="logviewapi"' >> $BASH_ENV
+            echo 'export RANCHER_PRODUCTION_DEPLOYMENT="logviewapi"' >> $BASH_ENV
       - run:
           name: "Install the @mishguru/service package"
           command: |
@@ -24,11 +26,12 @@ jobs:
       - run:
           name: "Install dependencies"
           command: |
-            # service-install-dependencies
-            cd packages/api && service-install-dependencies
+            cd packages/api
+            service-install-dependencies
       - run:
           name: Deploy
           command: |
+            cd packages/api
             service-push-docker-tag
             service-deploy-to-rancher
 
