@@ -17,6 +17,7 @@ Commands:
   logv edit-config   Open the server config in your editor
   logv read [ids..]  Display details about selected logs
   logv filter        Display a list of logs                            [default]
+  logv use [server]  Set which server to use by default
 
 Options:
   --version       Show version number                                  [boolean]
