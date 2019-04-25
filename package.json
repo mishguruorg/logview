@@ -7,12 +7,10 @@
   "scripts": {
     "bootstrap": "yarn",
     "build": "lerna run build",
-    "publish": "npm run build && lerna publish"
+    "publish": "lerna publish"
   },
   "devDependencies": {
-    "lerna": "^3.13.4"
-  },
-  "dependencies": {
+    "lerna": "^3.13.4",
     "yarn": "1.15.2"
   }
 }
