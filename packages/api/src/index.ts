@@ -1,9 +1,8 @@
 import GraphQLJSON from 'graphql-type-json'
 import delay from 'delay'
-import meta from '@mishguru/mishmeta'
+import meta, { Log } from '@mishguru/mishmeta'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import { GraphQLServer } from 'graphql-yoga'
-import { getMetaDbCredentials } from '@mishguru/commandquery'
 
 import createDataloader from './dataloader/createDataloader'
 
@@ -119,7 +118,7 @@ const searchLogs = async (input: SearchLogsInput) => {
     attributes: ['id'],
     where: where,
     raw: true,
-    order: [['id', desc ? 'desc' : 'asc']],
+    order: [['id', desc ? 'DESC' : 'ASC']],
     limit: last + 1,
   })
 
@@ -139,10 +138,6 @@ const searchLogs = async (input: SearchLogsInput) => {
   }
 }
 
-type Log = {
-  id: number
-}
-
 type Context = {
   authorized: boolean,
   db: {
@@ -156,8 +151,8 @@ type SearchLogsResult = {
   results: Log[]
   cursors: {
     hasNext: boolean
-    before?: string
-    after?: string
+    before?: number
+    after?: number
   }
 }
 
@@ -272,7 +267,7 @@ const resolvers = {
   }
 }
 
-meta.init({ ...getMetaDbCredentials(), verbose: true }).then(() => {
+meta.connect().then(() => {
   const server = new GraphQLServer({
     typeDefs,
     resolvers,
