@@ -1,6 +1,6 @@
 {
   "name": "@mishguru/logview-api",
-  "version": "1.5.0",
+  "version": "1.8.0",
   "description": "Logview API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
