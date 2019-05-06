@@ -1,9 +1,6 @@
 {
   "name": "@mishguru/logview",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "bootstrap": "yarn",
     "build": "lerna run build",
