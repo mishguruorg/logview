@@ -16,7 +16,7 @@ jobs:
             mkdir ~/npm
             echo prefix = ~/npm >> ~/.npmrc
             echo 'export PATH=$PATH:~/npm/bin/' >> $BASH_ENV
-            echo 'export DOCKER_BASE="mishguru/fanoutbase"' >> $BASH_ENV
+            echo 'export DOCKER_BASE="mishguru/fanoutbase:latest"' >> $BASH_ENV
             echo 'export RANCHER_INTERNAL_DEPLOYMENT="logviewapi"' >> $BASH_ENV
             echo 'export RANCHER_PRODUCTION_DEPLOYMENT="logviewapi"' >> $BASH_ENV
       - run:

@@ -10,7 +10,9 @@ const ascend = async (client, argv) => {
         userId: argv.user,
         type: argv.type,
         sentFrom: argv.sentFrom,
-        payload: argv.payload
+        payload: argv.payload,
+        sentBefore: argv.before,
+        sentAfter: argv.after,
       }
     },
     query: gql`
