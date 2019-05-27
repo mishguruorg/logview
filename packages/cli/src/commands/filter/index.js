@@ -17,7 +17,7 @@ export const builder = {
   },
   lines: {
     describe: 'Number of logs to retrieve',
-    alias: 'l',
+    alias: 'n',
     default: 20,
     type: 'number'
   },
@@ -46,13 +46,21 @@ export const builder = {
     type: 'string'
   },
   before: {
-    describe: 'Only display logs created before the specified date',
+    describe: 'Only display logs with an ID before the specified ID',
     alias: 'b',
     type: 'string'
   },
   after: {
-    describe: 'Only display logs created after the specified date',
+    describe: 'Only display logs with an ID after the specified ID',
     alias: 'a',
+    type: 'string'
+  },
+  sentBefore: {
+    describe: 'Only display logs created before the specified date',
+    type: 'string'
+  },
+  sentAfter: {
+    describe: 'Only display logs created after the specified date',
     type: 'string'
   }
 }

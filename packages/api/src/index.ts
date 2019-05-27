@@ -24,13 +24,14 @@ const typeDefs = `
 
   type Cursors {
     hasNext: Boolean!
-    after: String
+    before: ID
+    after: ID
   }
 
   input SearchLogsInput {
     last: Int!
-    after: String
-    before: String
+    after: ID
+    before: ID
     sentFrom: [String]
     sentBefore: DateTime
     sentAfter: DateTime
@@ -105,7 +106,7 @@ const searchLogs = async (input: SearchLogsInput) => {
   }
 
   if (after != null) {
-    where.id = { $lt: before }
+    where.id = { $lt: after }
     desc = true
   }
 
@@ -119,7 +120,7 @@ const searchLogs = async (input: SearchLogsInput) => {
     where: where,
     raw: true,
     order: [['id', desc ? 'DESC' : 'ASC']],
-    limit: last + 1,
+    limit: last + 1
   })
 
   const results = allResults.slice(0, last)

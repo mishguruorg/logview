@@ -11,8 +11,8 @@ const ascend = async (client, argv) => {
         type: argv.type,
         sentFrom: argv.sentFrom,
         payload: argv.payload,
-        sentBefore: argv.before,
-        sentAfter: argv.after,
+        sentBefore: argv.sentBefore != null ? new Date(argv.sentBefore) : null,
+        sentAfter: argv.sentAfter != null ? new Date(argv.sentAfter) : null
       }
     },
     query: gql`
