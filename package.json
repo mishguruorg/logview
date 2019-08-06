@@ -7,7 +7,7 @@
     "publish": "lerna publish"
   },
   "devDependencies": {
-    "lerna": "^3.13.4",
-    "yarn": "1.15.2"
+    "lerna": "^3.16.4",
+    "yarn": "1.17.3"
   }
 }

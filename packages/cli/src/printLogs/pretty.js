@@ -14,6 +14,9 @@ const TYPE_SIZE = 40
 const DATE_SIZE = 25
 
 const formatPayload = (payload, size) => {
+  if (payload == null) {
+    return column('[no payload]', size)
+  }
   const text = Object.entries(payload)
     .filter(([key]) => {
       return ['__turbine__'].includes(key) === false
