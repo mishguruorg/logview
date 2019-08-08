@@ -1,8 +1,11 @@
 import gql from 'graphql-tag'
+import { DateTime } from 'luxon'
 
 import printLogs from '../../printLogs'
 
 const descend = async (client, argv) => {
+  const afterDate = DateTime.utc().minus({ days: 7 }).toJSDate()
+
   const res = await client.query({
     variables: {
       input: {
@@ -11,19 +14,15 @@ const descend = async (client, argv) => {
         type: argv.type,
         sentFrom: argv.sentFrom,
         payload: argv.payload,
-        before: argv.before,
-        after: argv.after,
-        sentBefore: argv.sentBefore != null ? new Date(argv.sentBefore) : null,
-        sentAfter: argv.sentAfter != null ? new Date(argv.sentAfter) : null
+        beforeID: argv.before,
+        afterID: argv.after,
+        beforeDate: argv.sentBefore != null ? new Date(argv.sentBefore) : null,
+        afterDate: argv.sentAfter != null ? new Date(argv.sentAfter) : afterDate
       }
     },
     query: gql`
       query($input: SearchLogsInput!) {
         searchLogs(input: $input) {
-          cursors {
-            hasNext
-            after
-          }
           results {
             id
             payload
