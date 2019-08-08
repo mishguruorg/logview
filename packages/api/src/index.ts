@@ -90,7 +90,7 @@ const searchLogs = async (input: SearchLogsInput) => {
     where.name = { $in: type }
   }
   if (payload != null) {
-    where.jsonString = { $like: payload }
+    where.payload = { $like: payload }
   }
   if (sentBefore != null) {
     if (where.createdAt == null) {
@@ -167,7 +167,7 @@ const resolvers = {
     },
     payload: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      const payload = await db.Log.load(log.id, 'jsonString')
+      const payload = await db.Log.load(log.id, 'payload')
       return JSON.parse(payload)
     },
     parent: async (log: Log, _: void, ctx: Context) => {
@@ -189,12 +189,7 @@ const resolvers = {
     },
     sentFrom: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      const jsonString = await db.Log.load(log.id, 'jsonString')
-      const payload = JSON.parse(jsonString)
-      if (payload != null && payload.__turbine__ != null) {
-        return payload.__turbine__.sentFrom
-      }
-      return null
+      return db.Log.load(log.id, 'sentFrom')
     },
     sentAt: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
