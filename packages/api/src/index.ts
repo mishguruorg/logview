@@ -38,6 +38,7 @@ const typeDefs = `
     afterID: ID
     beforeID: ID
 
+    payload: String
     sentFrom: [String]
     userId: [Int]
     type: [String]
@@ -66,6 +67,7 @@ interface SearchLogsInput {
   afterID?: string,
   beforeID?: string,
 
+  payload?: string,
   sentFrom?: string[],
   userId?: number[],
   type?: string[],
@@ -80,6 +82,7 @@ const searchLogs = async (input: SearchLogsInput) => {
     afterID,
     beforeID,
 
+    payload,
     sentFrom,
     userId,
     type,
@@ -97,6 +100,11 @@ const searchLogs = async (input: SearchLogsInput) => {
     where.createdAt['$lte'] = beforeDate
   }
 
+  if (payload != null) {
+    const [key,value] = payload.split(':')
+    const seq = meta.sequelize as any
+    where.$and = seq.where(seq.fn('JSON_EXTRACT', seq.col('payload'), `$.${key}`), seq.literal(value))
+  }
   if (userId != null) {
     where.userId = { $in: userId }
   }
