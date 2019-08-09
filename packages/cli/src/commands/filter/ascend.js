@@ -1,8 +1,11 @@
 import gql from 'graphql-tag'
+import { DateTime } from 'luxon'
 
 import printLogs from '../../printLogs'
 
 const ascend = async (client, argv) => {
+  const afterDate = DateTime.utc().minus({ days: 7 }).toJSDate()
+
   const stream = client.subscribe({
     variables: {
       input: {
@@ -11,8 +14,7 @@ const ascend = async (client, argv) => {
         type: argv.type,
         sentFrom: argv.sentFrom,
         payload: argv.payload,
-        sentBefore: argv.sentBefore != null ? new Date(argv.sentBefore) : null,
-        sentAfter: argv.sentAfter != null ? new Date(argv.sentAfter) : null
+        afterDate: argv.sentAfter != null ? new Date(argv.sentAfter) : afterDate
       }
     },
     query: gql`

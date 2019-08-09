@@ -4,7 +4,7 @@ import meta, { Log } from '@mishguru/mishmeta'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import { GraphQLServer } from 'graphql-yoga'
 
-import createDataloader from './dataloader/createDataloader'
+import createDb, { Db } from './createDb'
 
 const SECRET_KEY = 'undergo-unblock-wobbling-undercoat-snowbound-swoosh-fame'
 
@@ -16,6 +16,7 @@ const typeDefs = `
     id: ID
     userId: Int
     parent: Log
+    children: [Log]
     sentFrom: String
     sentAt: DateTime
     type: String
@@ -24,20 +25,23 @@ const typeDefs = `
 
   type Cursors {
     hasNext: Boolean!
-    before: ID
-    after: ID
+    beforeID: ID
+    afterID: ID
   }
 
   input SearchLogsInput {
     last: Int!
-    after: ID
-    before: ID
+    afterDate: DateTime!
+
+    beforeDate: DateTime
+
+    afterID: ID
+    beforeID: ID
+
+    payload: String
     sentFrom: [String]
-    sentBefore: DateTime
-    sentAfter: DateTime
     userId: [Int]
     type: [String]
-    payload: String
   }
 
   type SearchLogsResult {
@@ -55,72 +59,78 @@ const typeDefs = `
   }
 `
 
-type SearchLogsInput = {
-  last: number
-  after?: string
-  before?: string
-  sentBefore?: Date
-  sentAfter?: Date
-  sentFrom?: string[]
-  userId?: number[]
-  type?: string[]
-  payload?: string
+interface SearchLogsInput {
+  last: number,
+  beforeDate: Date,
+  afterDate: Date,
+
+  afterID?: string,
+  beforeID?: string,
+
+  payload?: string,
+  sentFrom?: string[],
+  userId?: number[],
+  type?: string[],
 }
 
 const searchLogs = async (input: SearchLogsInput) => {
   const {
     last,
-    after,
-    before,
+    beforeDate,
+    afterDate,
+
+    afterID,
+    beforeID,
+
+    payload,
     sentFrom,
-    sentBefore,
-    sentAfter,
     userId,
     type,
-    payload
   } = input
 
   let desc = true
 
-  const where: any = {}
+  const where: any = {
+    createdAt: {
+      $gte: afterDate,
+    }
+  }
+
+  if (beforeDate != null) {
+    where.createdAt['$lte'] = beforeDate
+  }
+
+  if (payload != null) {
+    const [key,value] = payload.split(':')
+    const seq = meta.sequelize as any
+    where.$and = seq.where(seq.fn('JSON_EXTRACT', seq.col('payload'), `$.${key}`), seq.literal(value))
+  }
   if (userId != null) {
     where.userId = { $in: userId }
   }
   if (type != null) {
     where.name = { $in: type }
   }
-  if (payload != null) {
-    where.payload = { $like: payload }
-  }
-  if (sentBefore != null) {
-    if (where.createdAt == null) {
-      where.createdAt = {}
-    }
-    where.createdAt['$lt'] = sentBefore
-  }
-  if (sentAfter != null) {
-    if (where.createdAt == null) {
-      where.createdAt = {}
-    }
-    where.createdAt['$gt'] = sentAfter
+  if (sentFrom != null) {
+    where.sentFrom = { $in: sentFrom }
   }
 
-  if (after != null) {
-    where.id = { $lt: after }
+  if (afterID != null) {
+    where.messageId = { $lt: afterID }
     desc = true
   }
 
-  if (before != null) {
-    where.id = { $gt: before }
+  if (beforeID != null) {
+    where.messageId = { $gt: beforeID }
     desc = false
   }
 
   const allResults = await meta.Log.findAll({
-    attributes: ['id'],
+    attributes: ['messageId'],
     where: where,
     raw: true,
-    order: [['id', desc ? 'DESC' : 'ASC']],
-    limit: last + 1
+    order: [['createdAt', desc ? 'DESC' : 'ASC']],
+    limit: last + 1,
   })
 
   const results = allResults.slice(0, last)
@@ -133,67 +143,79 @@ const searchLogs = async (input: SearchLogsInput) => {
     results,
     cursors: {
       hasNext: allResults.length > last,
-      before: results.length > 0 ? results[0].id : null,
-      after: results.length > 0 ? results[results.length - 1].id : null,
+      beforeID: results.length > 0 ? results[0].messageId : null,
+      afterID: results.length > 0 ? results[results.length - 1].messageId : null,
     },
   }
 }
 
-type Context = {
+interface Context {
   authorized: boolean,
-  db: {
-    Log: {
-      load: (id: number, column: string) => Promise<any>
-    }
-  }
+  db: Db,
 }
 
-type SearchLogsResult = {
-  results: Log[]
+interface SearchLogsResult {
+  results: Log[],
   cursors: {
-    hasNext: boolean
-    before?: number
-    after?: number
-  }
+    hasNext: boolean,
+    beforeID?: string,
+    afterID?: string,
+  },
 }
 
 const resolvers = {
   JSON: GraphQLJSON,
   DateTime: GraphQLDateTime,
   Log: {
+    id: async (log: Log) => {
+      return log.messageId
+    },
     type: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      return db.Log.load(log.id, 'name')
+      return db.LogByMessageId.load<string>(log.messageId, 'name')
     },
     payload: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      const payload = await db.Log.load(log.id, 'payload')
+      const payload = await db.LogByMessageId.load<string>(
+        log.messageId,
+        'payload',
+      )
       return JSON.parse(payload)
     },
     parent: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      const parentId = await db.Log.load(log.id, 'parentId')
+      const parentId = await db.LogByMessageId.load<string>(
+        log.messageId,
+        'parentMessageId',
+      )
 
       if (parentId == null) {
         return null
       }
 
       return {
-        id: parentId,
-        __typename: 'Log',
+        messageId: parentId,
       }
+    },
+    children: async (log: Log, _: void, ctx: Context) => {
+      const { db } = ctx
+      const children = await db.LogByParentMessageId.loadAll(
+        log.messageId,
+        'messageId',
+      )
+      return children.map((messageId) => ({ messageId }))
     },
     userId: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      return db.Log.load(log.id, 'userId')
+      return db.LogByMessageId.load<number>(log.messageId, 'userId')
     },
     sentFrom: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      return db.Log.load(log.id, 'sentFrom')
+      return db.LogByMessageId.load<string>(log.messageId, 'sentFrom')
     },
     sentAt: async (log: Log, _: void, ctx: Context) => {
       const { db } = ctx
-      return db.Log.load(log.id, 'createdAt')
+      return db.LogByMessageId.load<string>(log.messageId, 'createdAt')
     },
   },
   Query: {
@@ -201,15 +223,25 @@ const resolvers = {
       if (ctx.authorized !== true) {
         throw new Error('Invalid authorization!')
       }
+
+      ctx.db = createDb({})
+
       const { ids } = args
-      return ids.map((id: number) => ({ id }))
+      return ids.map((messageId: string) => ({ messageId }))
     },
     searchLogs: async (_: void, args: any, ctx: Context) => {
       if (ctx.authorized !== true) {
         throw new Error('Invalid authorization!')
       }
+
+      ctx.db = createDb({
+        createdAt: {
+          $gte: args.input.afterDate,
+        }
+      })
+
       return searchLogs(args.input)
-    }
+    },
   },
   Subscription: {
     searchLogs: {
@@ -220,47 +252,53 @@ const resolvers = {
 
         const { input } = args
 
+        ctx.db = createDb({
+          createdAt: {
+            $gte: args.input.afterDate,
+          }
+        })
+
         let done = false
-        let before = input.before
+        let beforeID = input.beforeID
 
         const getNextLogs = async (): Promise<SearchLogsResult> => {
-          const { results, cursors } = await searchLogs({ ...input, before })
+          const { results, cursors } = await searchLogs({ ...input, beforeID })
 
           if (results.length === 0 && done === false) {
             await delay(2000)
             return getNextLogs()
           }
 
-          before = cursors.before
+          beforeID = cursors.beforeID
           return { results, cursors }
         }
 
         return {
-          async next() {
+          async next () {
             return {
               value: {
-                searchLogs: await getNextLogs()
+                searchLogs: await getNextLogs(),
               },
-              done
+              done,
             }
           },
-          async return() {
+          async return () {
             done = true
             return {
-              value: <any>undefined,
-              done
+              value: undefined as any,
+              done,
             }
           },
-          async throw(error: Error) {
+          async throw (error: Error) {
             throw error
           },
-          [Symbol.asyncIterator]() {
+          [Symbol.asyncIterator] () {
             return this
-          }
+          },
         }
-      }
-    }
-  }
+      },
+    },
+  },
 }
 
 meta.connect().then(() => {
@@ -280,12 +318,9 @@ meta.connect().then(() => {
 
       return {
         authorized,
-        db: createDataloader()
       }
-    }
+    },
   })
-
-  const IS_PRODUCTION = process.env.NODE_ENV !== 'development'
 
   server.start(({ port }) => console.log(`Server is listening on ${port}`))
 })
