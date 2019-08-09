@@ -1,6 +1,6 @@
 {
   "name": "@mishguru/logview-cli",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Logview CLi",
   "main": "dist/index.js",
   "dependencies": {
