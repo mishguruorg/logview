@@ -45,6 +45,12 @@ export async function handler (argv) {
 
   for (const log of data.logs) {
     delete log.__typename
+    if (log.parent != null) {
+      delete log.parent.__typename
+    }
+    for (const child of log.children) {
+      delete child.__typename
+    }
   }
 
   printLogs(argv.format, data.logs)
