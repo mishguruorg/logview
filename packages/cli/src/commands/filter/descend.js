@@ -4,7 +4,9 @@ import { DateTime } from 'luxon'
 import printLogs from '../../printLogs'
 
 const descend = async (client, argv) => {
-  const afterDate = DateTime.utc().minus({ days: 7 }).toJSDate()
+  const afterDate = DateTime.utc()
+    .minus({ days: 7 })
+    .toJSDate()
 
   const res = await client.query({
     variables: {
@@ -17,7 +19,8 @@ const descend = async (client, argv) => {
         beforeID: argv.before,
         afterID: argv.after,
         beforeDate: argv.sentBefore != null ? new Date(argv.sentBefore) : null,
-        afterDate: argv.sentAfter != null ? new Date(argv.sentAfter) : afterDate
+        afterDate:
+          argv.sentAfter != null ? new Date(argv.sentAfter) : afterDate
       }
     },
     query: gql`
@@ -35,7 +38,7 @@ const descend = async (client, argv) => {
     `
   })
 
-  const { results, cursors } = res.data.searchLogs
+  const { results } = res.data.searchLogs
   printLogs(argv.format, results)
 
   client.stop()

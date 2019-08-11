@@ -35,7 +35,7 @@ try {
   console.error(`Error parsing ${CONFIG_PATH}.`, error)
 }
 
-export function getServer(argv) {
+export function getServer (argv) {
   return config.servers[argv.server || config.default]
 }
 

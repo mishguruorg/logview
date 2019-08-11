@@ -65,7 +65,7 @@ export const builder = {
   }
 }
 
-export async function handler(argv) {
+export async function handler (argv) {
   const client = createClient(getServer(argv))
 
   try {

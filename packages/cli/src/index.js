@@ -9,7 +9,7 @@ import * as use from './commands/use'
 import config from './config'
 import pkg from '../package.json'
 
-const argv = yargs
+yargs
   .strict()
   .option('server', {
     describe: 'Which server to use from the config',
@@ -20,7 +20,6 @@ const argv = yargs
   .command(filter)
   .command(use)
   .help()
-
 
 const start = async () => {
   await selfupdate(pkg)

@@ -4,7 +4,9 @@ import { DateTime } from 'luxon'
 import printLogs from '../../printLogs'
 
 const ascend = async (client, argv) => {
-  const afterDate = DateTime.utc().minus({ days: 7 }).toJSDate()
+  const afterDate = DateTime.utc()
+    .minus({ days: 7 })
+    .toJSDate()
 
   const stream = client.subscribe({
     variables: {
@@ -14,7 +16,8 @@ const ascend = async (client, argv) => {
         type: argv.type,
         sentFrom: argv.sentFrom,
         payload: argv.payload,
-        afterDate: argv.sentAfter != null ? new Date(argv.sentAfter) : afterDate
+        afterDate:
+          argv.sentAfter != null ? new Date(argv.sentAfter) : afterDate
       }
     },
     query: gql`
@@ -33,14 +36,14 @@ const ascend = async (client, argv) => {
   })
 
   stream.subscribe({
-    next(res) {
+    next (res) {
       const { results } = res.data.searchLogs
       printLogs(argv.format, results.reverse())
     },
-    error(error) {
+    error (error) {
       console.error(error)
     },
-    complete() {
+    complete () {
       console.log('stream completed')
     }
   })
