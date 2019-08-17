@@ -39,7 +39,6 @@ const ascend = async (client: ApolloClient<any>, argv: Argv) => {
 
   stream.subscribe({
     next (res) {
-      console.log('NEXT')
       const { results } = res.data.searchLogs
       printLogs(argv.format, results.reverse())
     },

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@mishguru/mishmeta": "^215.1.0",
+    "@mishguru/mishmeta": "^215.4.1",
     "dataloader": "^1.4.0",
     "delay": "^4.3.0",
     "express-jwt": "5.3.1",
