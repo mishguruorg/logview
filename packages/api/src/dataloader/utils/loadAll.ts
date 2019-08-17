@@ -6,7 +6,7 @@ export interface Options {
   table: Model<any>,
   primaryKey: string,
   parseKeyAsNumber: boolean,
-  where: Record<string, any>
+  where: Record<string, any>,
 }
 
 const loadAll = <ID>(options: Options) => async (rawKeys: string[]) => {

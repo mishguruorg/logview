@@ -8,15 +8,19 @@
     "@mishguru/mishmeta": "^215.1.0",
     "dataloader": "^1.4.0",
     "delay": "^4.3.0",
+    "express-jwt": "5.3.1",
     "graphql-iso-date": "^3.6.1",
     "graphql-type-json": "^0.3.0",
-    "graphql-yoga": "^1.18.1"
+    "graphql-yoga": "^1.18.1",
+    "jsonwebtoken": "8.5.1",
+    "jwks-rsa": "1.6.0"
   },
   "devDependencies": {
     "@mishguru/package": "^7.5.0",
     "@types/aws-lambda": "^8.10.31",
     "@types/graphql-iso-date": "^3.3.1",
     "@types/graphql-type-json": "^0.3.0",
+    "@types/jsonwebtoken": "8.3.3",
     "@types/ws": "^6.0.2"
   },
   "scripts": {

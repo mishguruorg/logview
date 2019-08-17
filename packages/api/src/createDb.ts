@@ -13,13 +13,13 @@ const createDb = (where: Record<string, any>): Db => {
       table: metaDb.Log,
       primaryKey: 'messageId',
       parseKeyAsNumber: false,
-      where
+      where,
     }),
     LogByParentMessageId: createLoaderForTable<string>({
       table: metaDb.Log,
       primaryKey: 'parentMessageId',
       parseKeyAsNumber: false,
-      where
+      where,
     }),
   }
 }

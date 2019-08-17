@@ -3,10 +3,11 @@ import delay from 'delay'
 import meta, { Log } from '@mishguru/mishmeta'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import { GraphQLServer } from 'graphql-yoga'
+import jwksRsa from 'jwks-rsa'
+import jwt from 'jsonwebtoken'
+import { promisify } from 'util'
 
 import createDb, { Db } from './createDb'
-
-const SECRET_KEY = 'undergo-unblock-wobbling-undercoat-snowbound-swoosh-fame'
 
 const typeDefs = `
   scalar JSON
@@ -93,7 +94,7 @@ const searchLogs = async (input: SearchLogsInput) => {
   const where: any = {
     createdAt: {
       $gte: afterDate,
-    }
+    },
   }
 
   if (beforeDate != null) {
@@ -101,9 +102,12 @@ const searchLogs = async (input: SearchLogsInput) => {
   }
 
   if (payload != null) {
-    const [key,value] = payload.split(':')
+    const [key, value] = payload.split(':')
     const seq = meta.sequelize as any
-    where.$and = seq.where(seq.fn('JSON_EXTRACT', seq.col('payload'), `$.${key}`), seq.literal(value))
+    where.$and = seq.where(
+      seq.fn('JSON_EXTRACT', seq.col('payload'), `$.${key}`),
+      seq.literal(value),
+    )
   }
   if (userId != null) {
     where.userId = { $in: userId }
@@ -144,7 +148,8 @@ const searchLogs = async (input: SearchLogsInput) => {
     cursors: {
       hasNext: allResults.length > last,
       beforeID: results.length > 0 ? results[0].messageId : null,
-      afterID: results.length > 0 ? results[results.length - 1].messageId : null,
+      afterID:
+        results.length > 0 ? results[results.length - 1].messageId : null,
     },
   }
 }
@@ -237,7 +242,7 @@ const resolvers = {
       ctx.db = createDb({
         createdAt: {
           $gte: args.input.afterDate,
-        }
+        },
       })
 
       return searchLogs(args.input)
@@ -251,11 +256,12 @@ const resolvers = {
         }
 
         const { input } = args
+        console.log('Subscription', input)
 
         ctx.db = createDb({
           createdAt: {
             $gte: args.input.afterDate,
-          }
+          },
         })
 
         let done = false
@@ -301,26 +307,57 @@ const resolvers = {
   },
 }
 
+const AUTH0_CONFIG = {
+  domain: 'mishguruadmin.auth0.com',
+  audience: 'https://logview.mish.guru/',
+}
+
+const jwksClient = jwksRsa({
+  cache: true,
+  rateLimit: true,
+  jwksRequestsPerMinute: 5,
+  jwksUri: `https://${AUTH0_CONFIG.domain}/.well-known/jwks.json`,
+})
+
+const getKey = (header: any, callback: any) => {
+  jwksClient.getSigningKey(header.kid, (error: Error, key: any) => {
+    console.error(error)
+    var signingKey = key.publicKey || key.rsaPublicKey
+    callback(null, signingKey)
+  })
+}
+
 meta.connect().then(() => {
   const server = new GraphQLServer({
     typeDefs,
     resolvers,
-    context: (req) => {
-      let authorization
-
+    context: async (req) => {
+      let token
       if (req.connection) {
-        authorization = req.connection.context.authorization
+        token = req.connection.context.authorization.split(' ')[1]
       } else if (req.request) {
-        authorization = req.request.headers.authorization
+        token = req.request.headers.authorization.split(' ')[1]
       }
 
-      const authorized = authorization === SECRET_KEY
+      try {
+        const decoded = await promisify(jwt.verify.bind(jwt))(token, getKey, {
+          audience: AUTH0_CONFIG.audience,
+          issuer: `https://${AUTH0_CONFIG.domain}/`,
+          algorithms: ['RS256'],
+        })
 
-      return {
-        authorized,
+        return {
+          authorized: true
+        }
+      } catch (error) {
+        return {
+          authorized: false
+        }
       }
     },
   })
 
-  server.start(({ port }) => console.log(`Server is listening on ${port}`))
+  server.start(({ port }: { port: number }) =>
+    console.log(`Server is listening on ${port}`),
+  )
 })
