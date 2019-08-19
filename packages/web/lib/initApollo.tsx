@@ -37,7 +37,9 @@ function create (initialState) {
       credentials: 'same-origin',
       fetch: !isBrowser && fetch,
     })),
-    cache: new InMemoryCache().restore(initialState)
+    cache: new InMemoryCache({
+      dataIdFromObject: (object) => object.id || null
+    }).restore(initialState)
   })
 }
 

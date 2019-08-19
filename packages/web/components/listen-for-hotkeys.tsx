@@ -1,4 +1,4 @@
-import { GlobalHotKeys } from 'react-hotkeys'
+import { configure, GlobalHotKeys } from 'react-hotkeys'
 
 const KEY_MAP = {
   MOVE_UP: 'up',
@@ -10,11 +10,19 @@ type HotKeysProps = {
   children: React.ReactNode,
 }
 
+configure({
+  ignoreRepeatedEventsWhenKeyHeldDown: false
+})
+
 const ListenForHotKeys = (props: HotKeysProps) => {
   const { handlers, children } = props
 
   return (
-    <GlobalHotKeys keyMap={KEY_MAP} handlers={handlers} allowChanges>
+    <GlobalHotKeys
+      keyMap={KEY_MAP}
+      handlers={handlers}
+      allowChanges
+    >
       {children}
     </GlobalHotKeys>
   )

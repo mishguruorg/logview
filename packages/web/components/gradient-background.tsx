@@ -24,9 +24,9 @@ const GradientBackground = (props: Props) => {
         }
 
         @keyframes GradientFade {
-            0%{background-position:0% 90%}
-            50%{background-position:100% 11%}
-            100%{background-position:0% 90%}
+          0% { background-position:0% 90% }
+          50% { background-position:100% 11% }
+          100% { background-position:0% 90% }
         }
 
       `}</style>

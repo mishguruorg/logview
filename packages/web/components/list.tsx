@@ -1,4 +1,4 @@
-import React, { PureComponent, CSSProperties } from 'react'
+import React, { Ref, PureComponent, CSSProperties } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import classNames from 'classnames'
@@ -13,19 +13,24 @@ type ItemRendererProps = {
   data: {
     logs: Log[],
     selectedLogId: string
-  }
+    onClickLog: (logId: string) => void
+  },
 }
 
 class ItemRenderer extends PureComponent<ItemRendererProps> {
   render() {
     const { index, style, data } = this.props
-    const { logs, selectedLogId } = data
+    const { logs, selectedLogId, onClickLog } = data
     const log = logs[index]
     const even = index % 2 === 0
     const selected = log.id === selectedLogId
 
     return (
-      <div className={classNames('row', { even, selected })} style={style}>
+      <div
+        className={classNames('row', { even, selected })}
+        style={style}
+        onClick={() => onClickLog(log.id)}
+      >
         <span className='cell userId'>{log.userId}</span>
         <span className='cell sentFrom'>{log.sentFrom}</span>
         <span className='cell type'>{log.type}</span>
@@ -35,6 +40,7 @@ class ItemRenderer extends PureComponent<ItemRendererProps> {
             display: flex;
             font-size: 13px;
             line-height: 20px;
+            cursor: default;
           }
           .row.even {
             background: rgba(0, 0, 0, 0.04);
@@ -69,13 +75,13 @@ type ListProps = {
   loading: boolean,
   error: Error,
   logs: Log[],
-  selectedLogId: string
+  selectedLogId: string,
+  onClickLog: (logId: string) => void,
+  listRef: Ref<FixedSizeList>
 }
 
 const List = (props: ListProps) => {
-  const { loading, error, logs, selectedLogId } = props
-
-  console.log({ loading, error, logs })
+  const { listRef, loading, error, logs, selectedLogId, onClickLog } = props
 
   if (error) {
     console.error(error)
@@ -90,9 +96,10 @@ const List = (props: ListProps) => {
     <AutoSizer>
     {({ height, width }) => (
       <FixedSizeList
+        ref={listRef}
         height={height}
         width={width}
-        itemData={{ logs, selectedLogId }}
+        itemData={{ logs, selectedLogId, onClickLog }}
         itemCount={logs.length}
         itemSize={20}
       >

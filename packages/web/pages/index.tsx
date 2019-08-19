@@ -1,21 +1,16 @@
+import { useState } from 'react'
+
 import { useAuth0 } from '../lib/auth0'
 
-import LoadingScreen from '../components/loading-screen'
 import LoginForm from '../components/login-form'
 import App from '../components/app'
 
 const Index = () => {
-  const { isAuthenticated, loading: loadingAuth } = useAuth0()
+  const { isAuthenticated, loading } = useAuth0()
 
-  if (loadingAuth) {
+  if (loading || isAuthenticated === false) {
     return (
-      <LoadingScreen />
-    )
-  }
-
-  if (isAuthenticated === false) {
-    return (
-      <LoginForm />
+      <LoginForm loading={loading} />
     )
   }
 

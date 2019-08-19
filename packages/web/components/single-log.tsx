@@ -1,50 +1,22 @@
 import React from 'react'
-import { Query } from 'react-apollo'
-import gql from 'graphql-tag'
-import { useQuery } from '@apollo/react-hooks'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import JSONlanguage from 'react-syntax-highlighter/dist/cjs/languages/hljs/json'
 import colorscheme from 'react-syntax-highlighter/dist/cjs/styles/hljs/tomorrow'
 
 import { Log } from '../lib/types'
 import DateString from './date-string'
+import useLog from '../lib/use-log'
 
 SyntaxHighlighter.registerLanguage('json', JSONlanguage)
 
-const GET_LOG = gql`
-  query ($logId: ID!) {
-    logs(ids: [$logId]) {
-      id
-      userId
-      sentFrom
-      type
-      payload
-      sentAt
-    }
-  }
-`
-
 type SingleLogProps = {
-  logId: string
+  logId: string,
 }
 
 const SingleLog = (props: SingleLogProps) => {
-  const {logId } = props
+  const { logId } = props
 
-  const { loading, error, data } = useQuery(GET_LOG, {
-    variables: {logId}
-  })
-
-  if (error) {
-    console.error(error)
-    return <>Error loding posts.</>
-  }
-
-  if (loading) {
-    return <>Loading...</>
-  }
-
-  const log = data.logs[0]
+  const { log } = useLog({ logId })
 
   return (
     <div className='container'>
@@ -52,7 +24,7 @@ const SingleLog = (props: SingleLogProps) => {
         <span className='type'>{log.type}</span>
         <span className='sentAt'><DateString value={new Date(log.sentAt)} /></span>
       </header>
-      <SyntaxHighlighter
+      {log.payload && <SyntaxHighlighter
         language='json'
         style={colorscheme}
         customStyle={{
@@ -62,7 +34,7 @@ const SingleLog = (props: SingleLogProps) => {
       >
         {JSON.stringify(log.payload, null, 2)}
 
-      </SyntaxHighlighter>
+      </SyntaxHighlighter>}
       <style jsx>{`
         .container {
           margin: 10px;
