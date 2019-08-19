@@ -91,50 +91,62 @@ const searchLogs = async (input: SearchLogsInput) => {
 
   let desc = true
 
-  const where: any = {
-    createdAt: {
-      $gte: afterDate,
-    },
+  const replacements: Record<string, string|string[]|Date|number|number[]> = {
+    afterDate,
+    beforeDate,
+    userId,
+    type,
+    sentFrom,
+    afterID,
+    beforeID
   }
 
+  const where: string[] = [
+    'createdAt >= :afterDate',
+  ]
+
+
   if (beforeDate != null) {
-    where.createdAt['$lte'] = beforeDate
+    where.push('createdAt <= :beforeDate')
   }
 
   if (payload != null) {
     const [key, value] = payload.split(':')
+
     const seq = meta.sequelize as any
-    where.$and = seq.where(
-      seq.fn('JSON_EXTRACT', seq.col('payload'), `$.${key}`),
-      seq.literal(value),
-    )
+    where.push(`JSON_EXTRACT(payload, '$.${key}') = :payloadValue`)
+    replacements.payloadValue = value
   }
   if (userId != null) {
-    where.userId = { $in: userId }
+    where.push('userId IN (:userId)')
   }
   if (type != null) {
-    where.name = { $in: type }
+    where.push('name IN (:type)')
   }
   if (sentFrom != null) {
-    where.sentFrom = { $in: sentFrom }
+    where.push('sentFrom IN (:sentFrom)')
   }
 
   if (afterID != null) {
-    where.messageId = { $lt: afterID }
+    where.push('messageId < (:afterID)')
     desc = true
   }
 
   if (beforeID != null) {
-    where.messageId = { $gt: beforeID }
+    where.push('messageId > (:beforeID)')
     desc = false
   }
 
-  const allResults = await meta.Log.findAll({
-    attributes: ['messageId'],
-    where: where,
-    raw: true,
-    order: [['createdAt', desc ? 'DESC' : 'ASC']],
-    limit: last + 1,
+  const allResults = await meta.sequelize.query(`
+SELECT /*+ MAX_EXECUTION_TIME(1000) */
+  messageId
+FROM ${meta.Logs.tableName}
+WHERE
+  ${where.join(' AND\n  ')}
+ORDER BY createdAt ${desc ? 'DESC' : 'ASC'}
+LIMIT ${last + 1}`, {
+    type: meta.sequelize.QueryTypes.SELECT,
+    replacements
   })
 
   const results = allResults.slice(0, last)

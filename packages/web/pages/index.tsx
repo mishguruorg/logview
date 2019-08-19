@@ -1,16 +1,16 @@
-import NavBar from '../components/nav-bar'
-import List from '../components/list'
-import LoginForm from '../components/login-form'
-
 import { useAuth0 } from '../lib/auth0'
 
-const Index = () => {
-  const { isAuthenticated, loading } = useAuth0();
+import LoadingScreen from '../components/loading-screen'
+import LoginForm from '../components/login-form'
+import App from '../components/app'
 
-  if (loading) {
+const Index = () => {
+  const { isAuthenticated, loading: loadingAuth } = useAuth0()
+
+  if (loadingAuth) {
     return (
-      <div>Loading...</div>
-    );
+      <LoadingScreen />
+    )
   }
 
   if (isAuthenticated === false) {
@@ -20,10 +20,7 @@ const Index = () => {
   }
 
   return (
-    <>
-      <NavBar />
-      <List />
-    </>
+    <App />
   )
 }
 

@@ -14,14 +14,21 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link href='https://fonts.googleapis.com/css?family=Roboto&display=swap' rel='stylesheet' />
+          <link href='https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap' rel='stylesheet' />
         </Head>
         <body>
           <Main />
           <NextScript />
-          <style jsx>{`
+          <style jsx global>{`
             body {
+              margin: 0;
+              padding: 0;
+            }
+            body, button {
               font-family: 'Roboto', sans-serif;
+            }
+            code {
+              font-family: 'Roboto Mono', monospace;
             }
           `}</style>
         </body>
