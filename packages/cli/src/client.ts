@@ -64,7 +64,9 @@ const createClient = async (config: ServerConfig) => {
 
   const client = new ApolloClient({
     link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      addTypename: false,
+    }),
   })
 
   return client

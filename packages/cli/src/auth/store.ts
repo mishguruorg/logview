@@ -18,7 +18,11 @@ const getSession = async (serviceName: string) => {
       session = JSON.parse(jsonString)
       CURRENT_SESSION_MAP.set(serviceName, session)
     } catch (error) {
-      if (error != null && typeof error.message === 'string' && error.message.toString().match(/org.freedesktop.secrets/)) {
+      if (
+        error != null &&
+        typeof error.message === 'string' &&
+        error.message.toString().match(/org.freedesktop.secrets/)
+      ) {
         console.warn(`
 ********************************************************************************
 WARNING: node-keytar could not be used.

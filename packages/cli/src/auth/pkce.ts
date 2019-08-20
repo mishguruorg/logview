@@ -172,6 +172,8 @@ async function startChallengeRequest (options: StartChallengeRequestOptions) {
     let receivedCode = false
     const app = express()
 
+    const server = app.listen(port)
+
     app.use('/', async (req, res) => {
       const { code } = req.query
 
@@ -201,7 +203,6 @@ async function startChallengeRequest (options: StartChallengeRequestOptions) {
       await setSession(serviceName, session)
       resolve(session.accessToken)
     })
-    const server = app.listen(port)
   })
 
   return {

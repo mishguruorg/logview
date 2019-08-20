@@ -4,7 +4,7 @@ export interface Argv extends RootArgv {
   follow: boolean,
   lines: number,
   format: string,
-  user: number[],
+  user: string[],
   sentFrom: string[],
   type: string[],
   payload: string,
