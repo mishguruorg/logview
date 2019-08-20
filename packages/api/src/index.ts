@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken'
 import { promisify } from 'util'
 
 import createDb, { Db } from './createDb'
+import whereInNotIn from './whereInNotIn'
 
 const typeDefs = `
   scalar JSON
@@ -15,7 +16,7 @@ const typeDefs = `
 
   type Log {
     id: ID
-    userId: Int
+    userId: ID
     parent: Log
     children: [Log]
     sentFrom: String
@@ -40,9 +41,9 @@ const typeDefs = `
     beforeID: ID
 
     payload: String
-    sentFrom: [String]
-    userId: [Int]
-    type: [String]
+    sentFrom: [String!]
+    userId: [ID!]
+    type: [String!]
   }
 
   type SearchLogsResult {
@@ -70,7 +71,7 @@ interface SearchLogsInput {
 
   payload?: string,
   sentFrom?: string[],
-  userId?: number[],
+  userId?: string[],
   type?: string[],
 }
 
@@ -91,20 +92,19 @@ const searchLogs = async (input: SearchLogsInput) => {
 
   let desc = true
 
-  const replacements: Record<string, string|string[]|Date|number|number[]> = {
+  let replacements: Record<
+  string,
+  string | string[] | Date | number | number[]
+  > = {
     afterDate,
     beforeDate,
     userId,
     type,
-    sentFrom,
     afterID,
-    beforeID
+    beforeID,
   }
 
-  const where: string[] = [
-    'createdAt >= :afterDate',
-  ]
-
+  let where: string[] = ['createdAt >= :afterDate']
 
   if (beforeDate != null) {
     where.push('createdAt <= :beforeDate')
@@ -112,19 +112,23 @@ const searchLogs = async (input: SearchLogsInput) => {
 
   if (payload != null) {
     const [key, value] = payload.split(':')
-
-    const seq = meta.sequelize as any
     where.push(`JSON_EXTRACT(payload, '$.${key}') = :payloadValue`)
     replacements.payloadValue = value
   }
   if (userId != null) {
-    where.push('userId IN (:userId)')
+    const { replacements: r, where: w } = whereInNotIn('userId', userId)
+    replacements = { ...replacements, ...r }
+    where = where.concat(w)
   }
   if (type != null) {
-    where.push('name IN (:type)')
+    const { replacements: r, where: w } = whereInNotIn('name', type)
+    replacements = { ...replacements, ...r }
+    where = where.concat(w)
   }
   if (sentFrom != null) {
-    where.push('sentFrom IN (:sentFrom)')
+    const { replacements: r, where: w } = whereInNotIn('sentFrom', sentFrom)
+    replacements = { ...replacements, ...r }
+    where = where.concat(w)
   }
 
   if (afterID != null) {
@@ -137,17 +141,20 @@ const searchLogs = async (input: SearchLogsInput) => {
     desc = false
   }
 
-  const allResults = await meta.sequelize.query(`
+  const allResults = await meta.sequelize.query(
+    `
 SELECT /*+ MAX_EXECUTION_TIME(1000) */
   messageId
 FROM ${meta.Logs.tableName}
 WHERE
   ${where.join(' AND\n  ')}
 ORDER BY createdAt ${desc ? 'DESC' : 'ASC'}
-LIMIT ${last + 1}`, {
-    type: meta.sequelize.QueryTypes.SELECT,
-    replacements
-  })
+LIMIT ${last + 1}`,
+    {
+      type: meta.sequelize.QueryTypes.SELECT,
+      replacements,
+    },
+  )
 
   const results = allResults.slice(0, last)
 
@@ -268,7 +275,6 @@ const resolvers = {
         }
 
         const { input } = args
-        console.log('Subscription', input)
 
         ctx.db = createDb({
           createdAt: {
@@ -333,8 +339,12 @@ const jwksClient = jwksRsa({
 
 const getKey = (header: any, callback: any) => {
   jwksClient.getSigningKey(header.kid, (error: Error, key: any) => {
-    console.error(error)
-    var signingKey = key.publicKey || key.rsaPublicKey
+    if (error != null) {
+      console.error(error)
+      callback(error)
+      return undefined
+    }
+    const signingKey = key.publicKey || key.rsaPublicKey
     callback(null, signingKey)
   })
 }
@@ -352,24 +362,24 @@ meta.connect().then(() => {
       }
 
       try {
-        const decoded = await promisify(jwt.verify.bind(jwt))(token, getKey, {
+        await promisify(jwt.verify.bind(jwt))(token, getKey, {
           audience: AUTH0_CONFIG.audience,
           issuer: `https://${AUTH0_CONFIG.domain}/`,
           algorithms: ['RS256'],
         })
 
         return {
-          authorized: true
+          authorized: true,
         }
       } catch (error) {
         return {
-          authorized: false
+          authorized: false,
         }
       }
     },
   })
 
   server.start(({ port }: { port: number }) =>
-    console.log(`Server is listening on ${port}`),
+    console.info(`Server is listening on ${port}`),
   )
 })
