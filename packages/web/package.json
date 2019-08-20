@@ -24,6 +24,7 @@
     "luxon": "1.17.2",
     "react": "16.9.0",
     "react-apollo": "3.0.1",
+    "react-contextmenu": "2.11.0",
     "react-dom": "16.9.0",
     "react-hotkeys": "2.0.0",
     "react-syntax-highlighter": "11.0.2",

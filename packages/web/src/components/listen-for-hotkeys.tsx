@@ -1,4 +1,4 @@
-import { configure, GlobalHotKeys } from 'react-hotkeys'
+import { configure, HotKeys } from 'react-hotkeys'
 
 const KEY_MAP = {
   MOVE_UP: 'up',
@@ -18,13 +18,13 @@ const ListenForHotKeys = (props: HotKeysProps) => {
   const { handlers, children } = props
 
   return (
-    <GlobalHotKeys
+    <HotKeys
       keyMap={KEY_MAP}
       handlers={handlers}
       allowChanges
     >
       {children}
-    </GlobalHotKeys>
+    </HotKeys>
   )
 }
 

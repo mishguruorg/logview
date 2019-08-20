@@ -1,4 +1,4 @@
-import React, { Component, KeyboardEvent, useRef, useState } from 'react'
+import React, { Component, useRef, useState } from 'react'
 import { HotKeys } from 'react-hotkeys'
 
 import { useAuth0 } from '../lib/auth0'
@@ -14,28 +14,32 @@ import useSearchLogs from '../lib/use-search-logs'
 const App = () => {
   const listRef = useRef(null)
   const searchResults = useSearchLogs()
-  const [selectedLogId, setSelectedLogId] = useState(null)
+  const [selectedLogIds, setSelectedLogIds] = useState<string[]>([])
 
   const handlers = {
-    MOVE_UP: (event: KeyboardEvent) => {
-      event.preventDefault()
-      const index = searchResults.logs.findIndex((log) => {
-        return log.id === selectedLogId
-      })
-      const nextIndex = index > 0 ? index - 1 : 0
+    MOVE_UP: () => {
+      const lastSelectedLogId = selectedLogIds[selectedLogIds.length - 1]
+      const index = lastSelectedLogId == null
+        ? -1
+        : searchResults.logs.findIndex((log) => {
+          return log.id === lastSelectedLogId
+        })
+      const nextIndex = Math.max(0, index - 1)
       const log = searchResults.logs[nextIndex]
-      setSelectedLogId(log.id)
+      setSelectedLogIds([log.id])
       listRef.current.scrollToItem(nextIndex)
     },
-    MOVE_DOWN: (event: KeyboardEvent) => {
-      event.preventDefault()
+    MOVE_DOWN: () => {
       const maxLogIndex = searchResults.logs.length - 1
-      const index = searchResults.logs.findIndex((log) => {
-        return log.id === selectedLogId
-      })
-      const nextIndex = index < maxLogIndex ? index + 1 : maxLogIndex
+      const lastSelectedLogId = selectedLogIds[selectedLogIds.length - 1]
+      const index = lastSelectedLogId == null
+        ? -1
+        : searchResults.logs.findIndex((log) => {
+          return log.id === lastSelectedLogId
+        })
+      const nextIndex = Math.max(0, Math.min(maxLogIndex, index + 1))
       const log = searchResults.logs[nextIndex]
-      setSelectedLogId(log.id)
+      setSelectedLogIds([log.id])
       listRef.current.scrollToItem(nextIndex)
     }
   }
@@ -50,12 +54,18 @@ const App = () => {
           <List
             {...searchResults}
             listRef={listRef}
-            selectedLogId={selectedLogId}
-            onClickLog={setSelectedLogId}
+            selectedLogIds={selectedLogIds}
+            onClickLog={(event, id) => {
+              if (event.ctrlKey) {
+                setSelectedLogIds([...selectedLogIds, id])
+              } else {
+                setSelectedLogIds([id])
+              }
+            }}
           />
         </div>
-        <div className='single-log'>
-          {selectedLogId && <SingleLog logId={selectedLogId} />}
+        <div className='selected-list'>
+          {selectedLogIds.map((logId) => <SingleLog logId={logId} />)}
         </div>
         <style jsx>{`
           .page {
@@ -66,11 +76,11 @@ const App = () => {
             grid-template-columns: 1fr 1fr;
             grid-template-areas:
               "nav-bar nav-bar"
-              "list single-log";
+              "list selected-list";
           }
           .nav-bar { grid-area: nav-bar; }
           .list { grid-area: list }
-          .single-log { grid-area: single-log; }
+          .selected-list { grid-area: selected-list; overflow-y: auto; }
         `}</style>
       </div>
     </ListenForHotKeys>
