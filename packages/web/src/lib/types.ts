@@ -3,5 +3,5 @@ export interface Log {
   userId: number,
   sentFrom: string,
   type: string,
-  sentAt: string
+  sentAt: string,
 }

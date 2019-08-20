@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Logview Web Client",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start"
+    "dev": "next ./src",
+    "build": "next build ./src",
+    "start": "next start ./src",
+    "tidy": "pkg-tidy"
   },
   "author": "Mish Guru <dev@mish.guru>",
   "license": "MIT",
@@ -20,7 +22,6 @@
     "highlighter.js": "1.0.0",
     "isomorphic-unfetch": "3.0.0",
     "luxon": "1.17.2",
-    "next": "9.0.3",
     "react": "16.9.0",
     "react-apollo": "3.0.1",
     "react-dom": "16.9.0",
@@ -30,7 +31,9 @@
     "react-window": "1.8.5"
   },
   "devDependencies": {
+    "@mishguru/package": "7.5.0",
     "@types/react": "16.9.2",
+    "next": "9.0.4",
     "typescript": "3.5.3"
   }
 }

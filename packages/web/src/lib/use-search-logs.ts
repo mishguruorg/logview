@@ -17,7 +17,8 @@ export const SEARCH_LOGS = gql`
 
 const useSearchLogs = () => {
   const { loading, error, data } = useQuery(SEARCH_LOGS)
-  const logs = data != null && data.searchLogs != null && data.searchLogs.results || []
+  const logs =
+    (data != null && data.searchLogs != null && data.searchLogs.results) || []
   return { loading, error, logs }
 }
 

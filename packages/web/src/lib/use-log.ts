@@ -2,7 +2,7 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 const GET_LOG = gql`
-  query ($logId: ID!) {
+  query($logId: ID!) {
     logs(ids: [$logId]) {
       id
       userId
@@ -14,8 +14,8 @@ const GET_LOG = gql`
   }
 `
 
-type UseLogProps = {
-  logId: string
+interface UseLogProps {
+  logId: string,
 }
 
 const useLog = (props: UseLogProps) => {
@@ -36,7 +36,7 @@ const useLog = (props: UseLogProps) => {
   })
 
   const { loading, error, data } = useQuery(GET_LOG, {
-    variables: {logId}
+    variables: { logId },
   })
 
   if (error != null) {
@@ -47,7 +47,7 @@ const useLog = (props: UseLogProps) => {
 
   const log = {
     ...cachedLog,
-    ...fullLog
+    ...fullLog,
   }
 
   return { loading, error, log }
