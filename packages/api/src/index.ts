@@ -143,7 +143,7 @@ const searchLogs = async (input: SearchLogsInput) => {
 
   const allResults = await meta.sequelize.query(
     `
-SELECT /*+ MAX_EXECUTION_TIME(1000) */
+SELECT /*+ MAX_EXECUTION_TIME(10000) */
   messageId
 FROM ${meta.Logs.tableName}
 WHERE
