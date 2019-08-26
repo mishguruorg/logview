@@ -28,8 +28,6 @@ async function requestViaRefreshToken (
 
   const now = DateTime.local()
 
-  console.log('Fetching via refresh_token')
-
   const res = await fetch(`https://${domain}/oauth/token`, {
     method: 'POST',
     headers: {
@@ -110,8 +108,6 @@ async function requestViaAuthorizationCode (
   const { code, domain, clientId, verifier, redirectUri } = options
 
   const now = DateTime.local()
-
-  console.log('Fetching via authorization_code')
 
   const res = await fetch(`https://${domain}/oauth/token`, {
     method: 'POST',
