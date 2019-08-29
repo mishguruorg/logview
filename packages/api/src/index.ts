@@ -94,7 +94,7 @@ const searchLogs = async (input: SearchLogsInput) => {
 
   let replacements: Record<
   string,
-  string | string[] | Date | number | number[]
+  string | string[] | Date | number | number[] | boolean | boolean[]
   > = {
     afterDate,
     beforeDate,
@@ -111,9 +111,19 @@ const searchLogs = async (input: SearchLogsInput) => {
   }
 
   if (payload != null) {
-    const [key, value] = payload.split(':')
+    const [, key, value] = payload.match(/([^:]+):(.*)/)
     where.push(`JSON_EXTRACT(payload, '$.${key}') = :payloadValue`)
-    replacements.payloadValue = value
+    replacements.payloadValue = (() => {
+      if (value === 'true') {
+        return true
+      } else if (value === 'false') {
+        return false
+      } else if (isNaN(parseInt(value, 10)) === false) {
+        return parseInt(value, 10)
+      } else {
+        return value
+      }
+    })()
   }
   if (userId != null) {
     const { replacements: r, where: w } = whereInNotIn('userId', userId)
@@ -145,7 +155,7 @@ const searchLogs = async (input: SearchLogsInput) => {
     `
 SELECT /*+ MAX_EXECUTION_TIME(10000) */
   messageId
-FROM ${meta.Logs.tableName}
+FROM ${meta.Log.tableName}
 WHERE
   ${where.join(' AND\n  ')}
 ORDER BY createdAt ${desc ? 'DESC' : 'ASC'}
