@@ -22,8 +22,8 @@ const login = async (config: AuthConfig) => {
     port: PORT,
   })
 
-  console.log('Please visit the following url:')
-  console.log(url)
+  console.warn('Please visit the following url:')
+  console.warn(url)
 
   return tokenPromise
 }

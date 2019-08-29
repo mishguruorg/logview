@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import fetch from 'isomorphic-fetch'
+import fetch from 'node-fetch'
 import express from 'express'
 import { DateTime } from 'luxon'
 

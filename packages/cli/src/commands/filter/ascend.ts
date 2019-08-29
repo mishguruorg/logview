@@ -46,7 +46,7 @@ const ascend = async (client: ApolloClient<any>, argv: Argv) => {
       console.error(error)
     },
     complete () {
-      console.info('stream completed')
+      console.warn('stream completed')
     },
   })
 }

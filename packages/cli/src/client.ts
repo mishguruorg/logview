@@ -1,5 +1,5 @@
 import WebSocket from 'ws'
-import fetch from 'isomorphic-fetch'
+import fetch from 'node-fetch'
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
@@ -15,6 +15,7 @@ const createClient = async (config: ServerConfig) => {
   const token = await getAuthToken(config.auth)
 
   const httpLink = new HttpLink({
+    // @ts-ignore: node-fetch works with HttpLink
     fetch,
     uri: config.http,
     headers: {
