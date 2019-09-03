@@ -1,13 +1,11 @@
 import React from 'react'
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
-import JSONlanguage from 'react-syntax-highlighter/dist/cjs/languages/hljs/json'
-import colorscheme from 'react-syntax-highlighter/dist/cjs/styles/hljs/tomorrow'
+
+import PayloadJSON from './payload-json'
+import PayloadTable from './payload-table'
 
 import { Log } from '../lib/types'
 import DateString from './date-string'
 import useLog from '../lib/use-log'
-
-SyntaxHighlighter.registerLanguage('json', JSONlanguage)
 
 type SingleLogProps = {
   logId: string,
@@ -21,20 +19,10 @@ const SingleLog = (props: SingleLogProps) => {
   return (
     <div className='container'>
       <header className='header'>
-        <span className='type'>{log.type}</span>
+        <span className='type'>{log.sentFrom} 🠒 {log.type}</span>
         <span className='sentAt'><DateString value={new Date(log.sentAt)} /></span>
       </header>
-      {log.payload && <SyntaxHighlighter
-        language='json'
-        style={colorscheme}
-        customStyle={{
-          margin: 0,
-          whiteSpace: 'pre-wrap'
-        }}
-      >
-        {JSON.stringify(log.payload, null, 2)}
-
-      </SyntaxHighlighter>}
+      {log.payload && <PayloadTable payload={log.payload} />}
       <style jsx>{`
         .container {
           margin: 10px;
@@ -45,6 +33,7 @@ const SingleLog = (props: SingleLogProps) => {
           display: flex;
           justify-content: space-between;
           height: 40px;
+          font-size: 14px;
           line-height: 40px;
           padding: 0 10px;
         }

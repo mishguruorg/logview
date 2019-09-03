@@ -1,4 +1,4 @@
-import App, { Container } from 'next/app'
+import App from 'next/app'
 import React from 'react'
 import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-boost'
@@ -15,13 +15,11 @@ class MyApp extends App<Props> {
     const { Component, pageProps, apolloClient } = this.props
 
     return (
-      <Container>
-        <Auth0Provider>
-          <ApolloProvider client={apolloClient}>
-            <Component {...pageProps} />
-          </ApolloProvider>
-        </Auth0Provider>
-      </Container>
+      <Auth0Provider>
+        <ApolloProvider client={apolloClient}>
+          <Component {...pageProps} />
+        </ApolloProvider>
+      </Auth0Provider>
     )
   }
 }

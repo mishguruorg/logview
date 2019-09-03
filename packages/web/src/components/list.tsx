@@ -3,6 +3,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import classNames from 'classnames'
 import { connectMenu, ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } from 'react-contextmenu'
+import InfiniteLoader from 'react-window-infinite-loader'
 
 import DateString from './date-string'
 
@@ -113,19 +114,33 @@ type ItemRendererProps = {
     logs: Log[],
     selectedLogIds: string[]
     onClickLog: (event: MouseEvent, logId: string) => void
+    loadingMore: number
   },
 }
 
 class ItemRenderer extends PureComponent<ItemRendererProps> {
   render() {
     const { index, style, data } = this.props
-    const { logs, selectedLogIds, onClickLog } = data
+    const { logs, selectedLogIds, onClickLog, loadingMore } = data
+
+    if (index >= loadingMore) {
+      return (
+        <div
+          key={index}
+          style={style}
+        >
+          Loading more...
+        </div>
+      )
+    }
+
     const log = logs[index]
     const even = index % 2 === 0
     const selected = selectedLogIds.includes(log.id)
 
     return (
       <ContextMenuTrigger
+        key={index}
         id={CONTEXT_MENU_ID}
         collect={() => ({ log })}
       >
@@ -177,15 +192,18 @@ class ItemRenderer extends PureComponent<ItemRendererProps> {
 
 type ListProps = {
   loading: boolean,
+  loadingMore: boolean,
   error: Error,
   logs: Log[],
   selectedLogIds: string[],
   onClickLog: (event: MouseEvent, logId: string) => void,
-  listRef: Ref<FixedSizeList>
+  setListRef: (el: FixedSizeList) => void,
+  hasMore: boolean,
+  fetchMore: () => Promise<any>
 }
 
 const List = (props: ListProps) => {
-  const { listRef, loading, error, logs, selectedLogIds, onClickLog } = props
+  const { setListRef, loading, loadingMore, error, logs, selectedLogIds, onClickLog, hasMore, fetchMore } = props
 
   if (error) {
     console.error(error)
@@ -196,20 +214,43 @@ const List = (props: ListProps) => {
     return <div>Loading</div>
   }
 
+  const isItemLoaded = (index: number) => {
+    return logs.length > index
+  }
+
+  const loadMoreItems = () => {
+    return fetchMore()
+  }
+
   return (
     <>
       <AutoSizer>
       {({ height, width }) => (
-        <FixedSizeList
-          ref={listRef}
-          height={height}
-          width={width}
-          itemData={{ logs, selectedLogIds, onClickLog }}
-          itemCount={logs.length}
-          itemSize={20}
-        >
-          {ItemRenderer}
-        </FixedSizeList>
+        <InfiniteLoader
+          isItemLoaded={isItemLoaded}
+          itemCount={logs.length + (hasMore ? 10 : 0)}
+          loadMoreItems={loadMoreItems}
+        >{({ onItemsRendered, ref }) => (
+          <FixedSizeList
+            ref={(el) => {
+              ref(el)
+              setListRef(el)
+            }}
+            height={height}
+            width={width}
+            itemData={{
+              logs, 
+              selectedLogIds,
+              onClickLog,
+              loadingMore: logs.length
+            }}
+            itemCount={logs.length + (loadingMore ? 10 : 0)}
+            itemSize={20}
+            onItemsRendered={onItemsRendered}
+          >
+            {ItemRenderer}
+          </FixedSizeList>
+        )}</InfiniteLoader>
       )}
       </AutoSizer>
       <ListItemContextMenu />

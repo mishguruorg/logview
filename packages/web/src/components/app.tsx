@@ -1,5 +1,6 @@
 import React, { Component, useRef, useState } from 'react'
 import { HotKeys } from 'react-hotkeys'
+import { DateTime } from 'luxon'
 
 import { useAuth0 } from '../lib/auth0'
 
@@ -11,9 +12,14 @@ import ListenForHotKeys from '../components/listen-for-hotkeys'
 
 import useSearchLogs from '../lib/use-search-logs'
 
+const AFTER_DATE = DateTime.local().minus({ weeks: 1 }).set({ milliseconds: 0, seconds: 0, minutes: 0, hours: 0 }).toJSDate()
+
 const App = () => {
-  const listRef = useRef(null)
-  const searchResults = useSearchLogs()
+  const [listRef, setListRef] = useState(null)
+
+  const searchResults = useSearchLogs({
+    afterDate: AFTER_DATE
+  })
   const [selectedLogIds, setSelectedLogIds] = useState<string[]>([])
 
   const handlers = {
@@ -27,7 +33,7 @@ const App = () => {
       const nextIndex = Math.max(0, index - 1)
       const log = searchResults.logs[nextIndex]
       setSelectedLogIds([log.id])
-      listRef.current.scrollToItem(nextIndex)
+      listRef && listRef.scrollToItem(nextIndex)
     },
     MOVE_DOWN: () => {
       const maxLogIndex = searchResults.logs.length - 1
@@ -40,7 +46,7 @@ const App = () => {
       const nextIndex = Math.max(0, Math.min(maxLogIndex, index + 1))
       const log = searchResults.logs[nextIndex]
       setSelectedLogIds([log.id])
-      listRef.current.scrollToItem(nextIndex)
+      listRef && listRef.scrollToItem(nextIndex)
     }
   }
 
@@ -53,7 +59,7 @@ const App = () => {
         <div className='list'>
           <List
             {...searchResults}
-            listRef={listRef}
+            setListRef={setListRef}
             selectedLogIds={selectedLogIds}
             onClickLog={(event, id) => {
               if (event.ctrlKey) {

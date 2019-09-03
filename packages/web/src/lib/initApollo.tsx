@@ -33,7 +33,7 @@ function create (initialState) {
     // Disables forceFetch on the server (so queries are only run once)
     ssrMode: !isBrowser,
     link: authLink.concat(new HttpLink({
-      uri: 'http://localhost:4000/',
+      uri: 'https://logview.mish.guru/',
       credentials: 'same-origin',
       fetch: !isBrowser && fetch,
     })),
