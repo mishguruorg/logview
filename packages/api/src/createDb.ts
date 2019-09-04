@@ -5,6 +5,7 @@ import { createLoaderForTable, Loader } from './dataloader'
 export interface Db {
   LogByMessageId: Loader<string>,
   LogByParentMessageId: Loader<string>,
+  LogType: Loader<string>,
 }
 
 const createDb = (where: Record<string, any>): Db => {
@@ -20,6 +21,12 @@ const createDb = (where: Record<string, any>): Db => {
       primaryKey: 'parentMessageId',
       parseKeyAsNumber: false,
       where,
+    }),
+    LogType: createLoaderForTable<string>({
+      table: metaDb.LogType,
+      primaryKey: 'id',
+      parseKeyAsNumber: false,
+      where: {},
     }),
   }
 }
