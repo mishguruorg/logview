@@ -34,7 +34,8 @@ function create (initialState) {
     ssrMode: !isBrowser,
     link: authLink.concat(new HttpLink({
       // uri: 'https://logview.mish.guru/',
-      uri: 'http://localhost:4000/',
+      uri: 'https://internal-logview.mish.guru/',
+      // uri: 'http://localhost:4000/',
       credentials: 'same-origin',
       fetch: !isBrowser && fetch,
     })),
