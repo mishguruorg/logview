@@ -13,7 +13,12 @@ const CONTEXT_MENU_ID = 'list-item'
 
 const ListItemContextMenu = connectMenu(CONTEXT_MENU_ID)((props) => {
   const { id, trigger } = props
-  const log = trigger != null ? trigger.log : {}
+
+  if (trigger == null) {
+    return null
+  }
+
+  const { log } = trigger
 
   return (
     <ContextMenu id={id}>
@@ -29,7 +34,7 @@ const ListItemContextMenu = connectMenu(CONTEXT_MENU_ID)((props) => {
         <MenuItem>Filter</MenuItem>
         <MenuItem>Exclude</MenuItem>
       </SubMenu>
-      <style global>{`
+      <style jsx global>{`
 .react-contextmenu {
   font-size: 13px;
   background-color: #fff;

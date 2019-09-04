@@ -15,10 +15,12 @@ import useSearchLogs from '../lib/use-search-logs'
 const AFTER_DATE = DateTime.local().minus({ weeks: 1 }).set({ milliseconds: 0, seconds: 0, minutes: 0, hours: 0 }).toJSDate()
 
 const App = () => {
+  const [filter, setFilter] = useState('unexpectedError')
   const [listRef, setListRef] = useState(null)
 
   const searchResults = useSearchLogs({
-    afterDate: AFTER_DATE
+    afterDate: AFTER_DATE,
+    type: filter.split(',').map((x) => x.trim()).filter((x) => x.length)
   })
   const [selectedLogIds, setSelectedLogIds] = useState<string[]>([])
 
@@ -54,7 +56,10 @@ const App = () => {
     <ListenForHotKeys handlers={handlers}>
       <div className='page'>
         <div className='nav-bar'>
-          <NavBar />
+          <NavBar
+            defaultFilter={filter}
+            onFilterChange={setFilter}
+          />
         </div>
         <div className='list'>
           <List

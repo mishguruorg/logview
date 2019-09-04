@@ -2,13 +2,13 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 export const SEARCH_LOGS = gql`
-  query($afterID: ID, $afterDate: DateTime!) {
+  query($afterID: ID, $afterDate: DateTime!, $type: [String!]) {
     searchLogs(
       input: {
         last: 10
         afterID: $afterID
         afterDate: $afterDate
-        type: ["unexpectedError"]
+        type: $type
       }
     ) {
       results {
@@ -27,14 +27,16 @@ export const SEARCH_LOGS = gql`
 `
 
 interface UseSearchLogsOptions {
+  type: string[],
   afterDate: Date,
 }
 
 const useSearchLogs = (options: UseSearchLogsOptions) => {
-  const { afterDate } = options
+  const { type, afterDate } = options
 
   const { networkStatus, error, data, fetchMore: nextQuery } = useQuery<any>(SEARCH_LOGS, {
     variables: {
+      type,
       afterDate,
     },
     notifyOnNetworkStatusChange: true,
@@ -43,15 +45,13 @@ const useSearchLogs = (options: UseSearchLogsOptions) => {
   let logs = []
   let hasMore = false
 
-  console.log({ networkStatus })
-
   if (networkStatus > 1 && error == null) {
+    console.log({ networkStatus, error, data })
     logs = data.searchLogs.results
     hasMore = data.searchLogs.cursors.hasNext
   }
 
   const fetchMore = async () => {
-    console.log('Loading more')
     return nextQuery({
       variables: {
         afterID: data.searchLogs.cursors.afterID,

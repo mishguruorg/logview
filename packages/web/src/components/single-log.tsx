@@ -11,18 +11,44 @@ type SingleLogProps = {
   logId: string,
 }
 
+const LoadingPayload = () => {
+  return (
+    <>
+      <div className='loading'>
+        Loading...
+      </div>
+      <style jsx>{`
+        .loading {
+          font-style: italic;
+          text-align: center;
+          height: 30px;
+          line-height: 30px;
+          font-size: 13px;
+          background: #FFFFFF;
+        }
+      `}</style>
+    </>
+  )
+}
+
 const SingleLog = (props: SingleLogProps) => {
   const { logId } = props
 
-  const { log } = useLog({ logId })
+  const { loading, log } = useLog({ logId })
 
   return (
     <div className='container'>
       <header className='header'>
         <span className='type'>{log.sentFrom} 🠒 {log.type}</span>
-        <span className='sentAt'><DateString value={new Date(log.sentAt)} /></span>
+        <span className='id'>{log.id}</span>
+        <span className='sentAt'>
+          <DateString value={new Date(log.sentAt)} withMilliseconds />
+        </span>
       </header>
+
+      { loading && <LoadingPayload /> }
       {log.payload && <PayloadTable payload={log.payload} />}
+
       <style jsx>{`
         .container {
           margin: 10px;
@@ -33,7 +59,7 @@ const SingleLog = (props: SingleLogProps) => {
           display: flex;
           justify-content: space-between;
           height: 40px;
-          font-size: 14px;
+          font-size: 13px;
           line-height: 40px;
           padding: 0 10px;
         }
