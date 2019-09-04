@@ -24,7 +24,7 @@ class MyDocument extends Document {
               margin: 0;
               padding: 0;
             }
-            body, button {
+            body, button, input, mark {
               font-family: 'Roboto', sans-serif;
             }
             code {

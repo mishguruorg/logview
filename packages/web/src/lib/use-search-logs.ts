@@ -46,7 +46,6 @@ const useSearchLogs = (options: UseSearchLogsOptions) => {
   let hasMore = false
 
   if (networkStatus > 1 && error == null) {
-    console.log({ networkStatus, error, data })
     logs = data.searchLogs.results
     hasMore = data.searchLogs.cursors.hasNext
   }
