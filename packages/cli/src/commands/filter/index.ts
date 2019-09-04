@@ -59,11 +59,11 @@ export const builder: Record<string, Options> = {
     alias: 'a',
     type: 'string',
   },
-  sentBefore: {
+  'sent-before': {
     describe: 'Only display logs created before the specified date',
     type: 'string',
   },
-  sentAfter: {
+  'sent-after': {
     describe: 'Only display logs created after the specified date',
     type: 'string',
   },

@@ -7,15 +7,11 @@ import printLogs from '../../printLogs'
 
 import { Argv } from './types'
 
-export const command = 'read [ids..]'
+export const command = 'read [ids...]'
 
 export const describe = 'Display details about selected logs'
 
 export const builder: Record<string, Options> = {
-  ids: {
-    describe: 'A list of ids to read',
-    type: 'array',
-  },
   format: {
     default: 'jq',
     type: 'string',

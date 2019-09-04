@@ -1,21 +1,17 @@
 import yargs, { Argv } from 'yargs'
 import { selfupdate } from '@mishguru/selfupdate'
 
-import * as editConfig from './commands/editConfig'
-import * as filter from './commands/filter'
-import * as read from './commands/read'
-import * as use from './commands/use'
-
 import config from './config'
 
-type Options = {
+interface Options {
   server: string,
   disableSelfupdate: boolean,
 }
 
-const client = yargs as Argv<Options>
+const app = yargs as Argv<Options>
 
-client
+app
+  .scriptName('logv')
   .strict()
   .option('server', {
     describe: 'Which server to use from the config',
@@ -25,10 +21,7 @@ client
     describe: 'Prevents the app from automatically updating itself',
     type: 'boolean',
   })
-  .command(editConfig)
-  .command(filter)
-  .command(read)
-  .command(use)
+  .commandDir('./commands', { recurse: true, include: /index.[jt]s$/ })
   .middleware(async (argv) => {
     if (argv.disableSelfupdate !== true) {
       await selfupdate(require('../package.json'))
@@ -37,4 +30,6 @@ client
     }
   })
   .help()
-  .parse()
+  .wrap(100)
+
+export default app
