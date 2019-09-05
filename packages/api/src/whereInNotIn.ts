@@ -19,7 +19,7 @@ const whereInNotIn = (key: string, input: string[]) => {
   if (replacements[keyIn].length > 0) {
     where.push(`${key} IN (:${keyIn})`)
   } else if (replacements[keyNotIn].length > 0) {
-    where.push(`${key} NOT IN (:${keyNotIn})`)
+    where.push(`(${key} IS NULL OR ${key} NOT IN (:${keyNotIn}))`)
   }
 
   return {
