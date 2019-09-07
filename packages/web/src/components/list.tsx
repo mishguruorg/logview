@@ -168,6 +168,9 @@ class ItemRenderer extends PureComponent<ItemRendererProps> {
             .row.even {
               background: rgba(0, 0, 0, 0.04);
             }
+            .row:active {
+              background: #2F80ED;
+            }
             .row.selected {
               background: #2F80ED;
               color: #FFFFFF;

@@ -1,6 +1,7 @@
 import React, { Component, useRef, useState } from 'react'
 import { HotKeys } from 'react-hotkeys'
 import { DateTime } from 'luxon'
+import Router from 'next/router'
 
 import { useAuth0 } from '../lib/auth0'
 
@@ -14,7 +15,16 @@ import useSearchLogs from '../lib/use-search-logs'
 
 const AFTER_DATE = DateTime.local().minus({ weeks: 1 }).set({ milliseconds: 0, seconds: 0, minutes: 0, hours: 0 }).toJSDate()
 
+const setSelectedLogIds = (logs: string[]) => {
+  Router.replace({ pathname: '/', query: { log: logs } })
+}
+
 const App = () => {
+  const { query } = Router
+
+  const selectedLogIds = query.log == null ? [] : Array.isArray(query.log) ? query.log : [query.log]
+  console.log({ selectedLogIds })
+
   const [filter, setFilter] = useState('unexpectedError')
   const [listRef, setListRef] = useState(null)
 
@@ -22,7 +32,6 @@ const App = () => {
     afterDate: AFTER_DATE,
     type: filter.split(',').map((x) => x.trim()).filter((x) => x.length)
   })
-  const [selectedLogIds, setSelectedLogIds] = useState<string[]>([])
 
   const handlers = {
     MOVE_UP: () => {
