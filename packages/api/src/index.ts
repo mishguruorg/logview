@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import { promisify } from 'util'
 
 import schema from './schema'
+import service from './service'
 
 const AUTH0_CONFIG = {
   domain: 'mishguruadmin.auth0.com',
@@ -30,7 +31,9 @@ const getKey = (header: any, callback: any) => {
   })
 }
 
-meta.connect().then(() => {
+meta.connect().then(async () => {
+  await service.start()
+
   const server = new GraphQLServer({
     schema,
     context: async (req) => {
@@ -50,6 +53,7 @@ meta.connect().then(() => {
 
         return {
           authorized: true,
+          dispatch: service.dispatch,
         }
       } catch (error) {
         return {

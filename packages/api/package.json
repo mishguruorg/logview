@@ -6,7 +6,10 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@mishguru/graphqldir": "3.2.0",
-    "@mishguru/mishmeta": "^215.13.0",
+    "@mishguru/mishmeta": "^216.0.1",
+    "@mishguru/turbine": "6.29.1",
+    "@mishguru/turbine-driver-aws-fanout": "6.29.1",
+    "@mishguru/turbine-driver-switch": "6.29.1",
     "dataloader": "^1.4.0",
     "delay": "^4.3.0",
     "express-jwt": "5.3.1",
