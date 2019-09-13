@@ -25,9 +25,7 @@ const mutations = {
       payload,
     })
 
-    return {
-      messageId: message.id,
-    }
+    return message.id
   },
 }
 

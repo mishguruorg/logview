@@ -33,17 +33,12 @@ export async function handler (argv: RedispatchArgv) {
     },
     mutation: gql`
       mutation($id: ID!) {
-        redispatch(id: $id) {
-          id
-          type
-        }
+        redispatch(id: $id)
       }
     `,
   })
 
-  const { id: nextId, type } = data.redispatch
-
-  console.info(`Dispatched ${chalk.green(type)} as ${chalk.blue(nextId)}`)
+  console.info(`Dispatched as ${chalk.blue(data.redispatch)}`)
 
   client.stop()
   process.exit(0)

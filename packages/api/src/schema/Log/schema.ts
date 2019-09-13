@@ -38,7 +38,7 @@ const type = `
 `
 
 const typeMutation = `
-  redispatch(id: ID!): Log
+  redispatch(id: ID!): ID
 `
 
 const typeQuery = `
