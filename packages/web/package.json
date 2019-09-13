@@ -31,6 +31,7 @@
     "react-fuzzy-highlighter": "0.2.1",
     "react-hotkeys": "2.0.0",
     "react-syntax-highlighter": "11.0.2",
+    "react-tag-autocomplete": "6.0.0-beta.1",
     "react-virtualized-auto-sizer": "1.0.2",
     "react-window": "1.8.5",
     "react-window-infinite-loader": "1.0.4"

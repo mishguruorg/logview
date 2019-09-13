@@ -5,3 +5,10 @@ export interface Log {
   type: string,
   sentAt: string,
 }
+
+export type Filter = {
+  userId: number[],
+  type: string[],
+  sentFrom: string[]
+}
+

@@ -11,7 +11,7 @@ const GradientBackground = (props: Props) => {
       {children}
       <style jsx>{`
         .page {
-          background: linear-gradient(241.37deg, #26F596, #0499F2);
+          background: linear-gradient(241.37deg, var(--c2-bg), var(--c3-bg));
           background-size: 400% 400%;
           animation: GradientFade 45s ease infinite;
 

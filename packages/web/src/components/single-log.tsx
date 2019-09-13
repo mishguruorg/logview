@@ -38,12 +38,19 @@ const SingleLog = (props: SingleLogProps) => {
 
   return (
     <div className='container'>
+
       <header className='header'>
-        <span className='type'>{log.sentFrom} 🠒 {log.type}</span>
-        <span className='id'>{log.id}</span>
+        <span className='type'>{log.type}</span>
         <span className='sentAt'>
-          <DateString value={new Date(log.sentAt)} withMilliseconds />
+          <DateString
+            value={new Date(log.sentAt)}
+            format='cccc, LLL d, y, HH:mm:ss.SSS'
+          />
         </span>
+      </header>
+      <header className='subheader'>
+        <span className='id'>{log.id}</span>
+        <span className='sentFrom'>{log.sentFrom}</span>
       </header>
 
       { loading && <LoadingPayload /> }
@@ -52,16 +59,37 @@ const SingleLog = (props: SingleLogProps) => {
       <style jsx>{`
         .container {
           margin: 10px;
-          border: 1px solid rgba(0, 0, 0, 0.5);
-          background: rgba(0, 0, 0, 0.1);
         }
+
+        /* extra scroll room */
+        .container:last-of-type {
+          margin-bottom: 500px;
+        }
+
         .header {
           display: flex;
           justify-content: space-between;
-          height: 40px;
+          height: 34px;
           font-size: 13px;
-          line-height: 40px;
+          line-height: 34px;
           padding: 0 10px;
+          background: var(--c3-bg);
+          color: var(--c1-fg);
+        }
+
+        .subheader {
+          display: flex;
+          justify-content: space-between;
+          height: 24px;
+          font-size: 13px;
+          line-height: 24px;
+          padding: 0 10px;
+          background: var(--c3-bg-1);
+          color: var(--c1-fg);
+        }
+
+        .id {
+          font-family: var(--font-monospace);
         }
         .type {
           font-weight: bold;

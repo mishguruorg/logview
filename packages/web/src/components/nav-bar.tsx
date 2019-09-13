@@ -1,12 +1,13 @@
 import React from 'react'
 
 import { useAuth0 } from '../lib/auth0'
+import { Filter } from '../lib/types'
 
-import Filter from './filter'
+import FilterBar from './filter-bar'
 
 type NavBarProps = {
-  defaultFilter: string,
-  onFilterChange: (filter: string) => void,
+  defaultFilter: Filter,
+  onFilterChange: (filter: Filter) => void,
 }
 
 const NavBar = (props: NavBarProps) => {
@@ -16,43 +17,36 @@ const NavBar = (props: NavBarProps) => {
 
   return (
     <div className='navbar'>
-      <Filter 
+      <FilterBar
         defaultFilter={defaultFilter}
         onFilterChange={onFilterChange}
       />
 
-      <div className='user-profile'>
-        <p className='user-name'>{user.name}</p>
-        <button
-          className='logout-button'
-          onClick={() => logout({ returnTo: 'http://localhost:3000/' })}
-        >
-          Log out
-        </button>
-      </div>
+      <button
+        className='logout-button'
+        onClick={() => logout({ returnTo: 'http://localhost:3000/' })}
+      >
+        Log out
+      </button>
 
       <style jsx>{`
         .navbar {
           height: 100%;
-          background: #2F80ED;
+          background: var(--c1-bg);
+          color: var(--c1-fg);
           display: flex;
           justify-content: space-between;
-        }
-
-        .user-profile {
-          display: flex;
-        }
-
-        .user-name {
-          color: #FFFFFF;
-          margin-right: 12px;
-          font-size: 12px; 
-          line-height: 40px;
         }
 
         .logout-button {
           cursor: pointer;
           appearance: none;
+          background: transparent;
+          border: none;
+          color: var(--c1-fg);
+        }
+        .logout-button:hover {
+          text-decoration: underline;
         }
       `}</style>
     </div>

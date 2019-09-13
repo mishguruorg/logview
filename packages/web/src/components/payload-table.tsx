@@ -14,6 +14,7 @@ const PayloadRow = (props: PayloadRowProps) => {
   const { parents = [], title, value } = props
 
   let valueString = null
+  let valueType = null
   let siblings = null
 
   if (typeof value == 'object' && value != null) {
@@ -26,8 +27,10 @@ const PayloadRow = (props: PayloadRowProps) => {
       />
     ))
     valueString = '{ ' + Object.keys(value).join(', ') + ' }'
+    valueType = 'object'
   } else {
     valueString = value
+    valueType = typeof value
   }
 
   return (
@@ -40,28 +43,37 @@ const PayloadRow = (props: PayloadRowProps) => {
           </span>
           {title}
         </td>
-        <td className='cell value'>{valueString}</td>
+        <td className={`cell value value-${valueType}`}>{valueString}</td>
         <style jsx>{`
           .row {
             display: contents;
           }
           .cell {
             font-size: 13px;
-            line-height: 18px;
-            background: hsl(0, 100%, 97%)
+            line-height: 20px;
+            padding: 0 10px;
           }
           .row:nth-child(2n) > .cell {
-            background: #FFFFFF;
+            background: var(--c4-bg-1);
           }
           .title {
-            font-weight: bold;
-            padding-left: 10px;
+            font-weight: 600;
           }
           .parent-title {
             color: hsl(0, 0%, 50%);
           }
           .value {
             white-space: pre-wrap;
+            padding-left: 10px;
+          }
+          .value-object {
+            font-style: italic;
+            color: var(--turquoise);
+          }
+          .value-number {
+            color: var(--blue);
+            font-family: var(--font-monospace);
+            font-weight: 600;
           }
         `}</style>
       </tr>
@@ -84,7 +96,7 @@ const PayloadTable = (props: PayloadTableProps) => {
         .table {
           display: grid;
           grid-template-columns: auto auto;
-          grid-template-rows: 18px;
+          background: var(--c4-bg);
         }
         .table-body {
           display: contents;

@@ -37,11 +37,10 @@ const ListItemContextMenu = connectMenu(CONTEXT_MENU_ID)((props) => {
       <style jsx global>{`
 .react-contextmenu {
   font-size: 13px;
-  background-color: #fff;
+  background-color: var(--white);
   background-clip: padding-box;
   border: 1px solid rgba(0,0,0,.15);
   border-radius: 0;
-  color: #373a3c;
   margin: 2px 0 0;
   min-width: 160px;
   outline: none;
@@ -60,19 +59,19 @@ const ListItemContextMenu = connectMenu(CONTEXT_MENU_ID)((props) => {
 .react-contextmenu-item {
   background: 0 0;
   border: 0;
-  color: #373a3c;
+  color: var(--c0-fg);
   cursor: pointer;
-  line-height: 1.5;
-  padding: 3px 20px;
+  line-height: 20px;
+  padding: 0 20px;
   text-align: inherit;
   white-space: nowrap;
 }
 
 .react-contextmenu-item.react-contextmenu-item--active,
 .react-contextmenu-item.react-contextmenu-item--selected {
-  color: #fff;
-  background-color: #20a0ff;
-  border-color: #20a0ff;
+  color: var(--c3-fg);
+  background-color: var(--c3-bg);
+  border-color: var(--c3-bg);
   text-decoration: none;
 }
 
@@ -80,7 +79,7 @@ const ListItemContextMenu = connectMenu(CONTEXT_MENU_ID)((props) => {
 .react-contextmenu-item.react-contextmenu-item--disabled:hover {
   background-color: transparent;
   border-color: rgba(0,0,0,.15);
-  color: #878a8c;
+  color: red;
 }
 
 .react-contextmenu-item--divider {
@@ -106,6 +105,7 @@ const ListItemContextMenu = connectMenu(CONTEXT_MENU_ID)((props) => {
   display: inline-block;
   position: absolute;
   right: 7px;
+  font-size: 12px;
 }
       `}</style>
     </ContextMenu>
@@ -169,11 +169,11 @@ class ItemRenderer extends PureComponent<ItemRendererProps> {
               background: rgba(0, 0, 0, 0.04);
             }
             .row:active {
-              background: #2F80ED;
+              background: var(--c3-bg);
             }
             .row.selected {
-              background: #2F80ED;
-              color: #FFFFFF;
+              background: var(--c3-bg);
+              color: var(--c3-fg);
             }
             .cell {
               padding: 0 8px;
@@ -207,7 +207,7 @@ type ListProps = {
   onClickLog: (event: MouseEvent, logId: string) => void,
   setListRef: (el: FixedSizeList) => void,
   hasMore: boolean,
-  fetchMore: () => Promise<any>
+  fetchMore: (options: { afterId: string }) => Promise<any>
 }
 
 const List = (props: ListProps) => {
@@ -223,11 +223,17 @@ const List = (props: ListProps) => {
   }
 
   const isItemLoaded = (index: number) => {
+    console.log('isItemLoaded', logs.length, index, logs.length > index)
     return logs.length > index
   }
 
-  const loadMoreItems = () => {
-    return fetchMore()
+  const loadMoreItems = (start, end) => {
+    const previousLog = logs[start-1]
+    console.log('Loading more after', previousLog)
+
+    return fetchMore({
+      afterId: previousLog.id,
+    })
   }
 
   return (

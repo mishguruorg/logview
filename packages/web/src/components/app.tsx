@@ -23,14 +23,18 @@ const App = () => {
   const { query } = Router
 
   const selectedLogIds = query.log == null ? [] : Array.isArray(query.log) ? query.log : [query.log]
-  console.log({ selectedLogIds })
 
-  const [filter, setFilter] = useState('unexpectedError')
+  const [filter, setFilter] = useState({
+    userId: [],
+    sentFrom: [],
+    type: []
+  })
   const [listRef, setListRef] = useState(null)
 
   const searchResults = useSearchLogs({
     afterDate: AFTER_DATE,
-    type: filter.split(',').map((x) => x.trim()).filter((x) => x.length)
+    userId: filter.userId,
+    type: filter.type
   })
 
   const handlers = {
@@ -77,7 +81,15 @@ const App = () => {
             selectedLogIds={selectedLogIds}
             onClickLog={(event, id) => {
               if (event.ctrlKey) {
-                setSelectedLogIds([...selectedLogIds, id])
+                const index = selectedLogIds.indexOf(id)
+                if (index < 0) {
+                  setSelectedLogIds([...selectedLogIds, id])
+                } else {
+                  setSelectedLogIds([
+                    ...selectedLogIds.slice(0, index),
+                    ...selectedLogIds.slice(index + 1)
+                  ])
+                }
               } else {
                 setSelectedLogIds([id])
               }
@@ -85,7 +97,9 @@ const App = () => {
           />
         </div>
         <div className='selected-list'>
-          {selectedLogIds.map((logId) => <SingleLog logId={logId} />)}
+          {selectedLogIds.map((logId) => (
+            <SingleLog key={logId} logId={logId} />
+          ))}
         </div>
         <style jsx>{`
           .page {
@@ -100,7 +114,11 @@ const App = () => {
           }
           .nav-bar { grid-area: nav-bar; }
           .list { grid-area: list }
-          .selected-list { grid-area: selected-list; overflow-y: auto; }
+
+          .selected-list {
+            background: var(--c5-bg);
+            grid-area: selected-list; overflow-y: auto;
+          }
         `}</style>
       </div>
     </ListenForHotKeys>
