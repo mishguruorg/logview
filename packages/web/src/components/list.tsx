@@ -164,9 +164,10 @@ class ItemRenderer extends PureComponent<ItemRendererProps> {
               font-size: 13px;
               line-height: 20px;
               cursor: default;
+              background: var(--c4-bg);
             }
             .row.even {
-              background: rgba(0, 0, 0, 0.04);
+              background: var(--c4-bg-1);
             }
             .row:active {
               background: var(--c3-bg);

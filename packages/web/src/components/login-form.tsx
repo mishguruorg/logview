@@ -40,7 +40,7 @@ const LoginForm = (props: LoginFormProps) => {
           padding: 30px;
           box-sizing: border-box;
 
-          background: #FFFFFF;
+          background: var(--c4-bg);
           box-shadow: 0px 10px 20px rgba(31, 32, 65, 0.05);
           border-radius: 4px;
 
@@ -85,7 +85,7 @@ const LoginForm = (props: LoginFormProps) => {
           text-transform: uppercase;
         }
         .loginButton {
-          background: linear-gradient(180deg, #BC9CFF 0%, #8BA4F9 100%);
+          background: linear-gradient(135deg, var(--g4) 0%, var(--g5) 100%);
           border-radius: 20px;
           height: 40px;
           border: none;
@@ -96,7 +96,7 @@ const LoginForm = (props: LoginFormProps) => {
 
           text-align: center;
           text-transform: uppercase;
-          color: #FFFFFF;
+          color: var(--g0);
 
           cursor: pointer;
 

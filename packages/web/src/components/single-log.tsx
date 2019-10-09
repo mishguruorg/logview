@@ -73,8 +73,8 @@ const SingleLog = (props: SingleLogProps) => {
           font-size: 13px;
           line-height: 34px;
           padding: 0 10px;
-          background: var(--c3-bg);
-          color: var(--c1-fg);
+          background: var(--c2-bg);
+          color: var(--c4-fg);
         }
 
         .subheader {
@@ -84,8 +84,8 @@ const SingleLog = (props: SingleLogProps) => {
           font-size: 13px;
           line-height: 24px;
           padding: 0 10px;
-          background: var(--c3-bg-1);
-          color: var(--c1-fg);
+          background: var(--c2-bg-1);
+          color: var(--c4-fg);
         }
 
         .id {
